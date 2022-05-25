@@ -78,7 +78,7 @@ su root
 ```
 
 ```
-genfstab -U /mnt >> /mnt/etc/fstab
+fstabgen -U /mnt >> /mnt/etc/fstab
 ```
 
 change root to make it boot from the right place:
