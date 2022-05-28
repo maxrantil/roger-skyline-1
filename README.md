@@ -68,15 +68,19 @@ sudo mount /dev/sda3 /mnt/home
 
 # install Artix:
 ```
-basestrap /mnt base base-devel runit elogind-runit linux linux-firmware vim
+basestrap /mnt base runit elogind-runit linux linux-firmware vim
 ```
+you could include 'base-devel' for more developer tools
 
-change to UUID:
+
 write it out:
 ```
 su root
 ```
-
+change to UUID:
+```
+fstabgen -U /mnt
+```
 ```
 fstabgen -U /mnt >> /mnt/etc/fstab
 ```
@@ -153,15 +157,15 @@ add user:
 ```
 
 ```
-# useradd --create-home john
+useradd --create-home john
 ```
 
 ```
-# passwd john
+passwd john
 ```
 
 ```
-# usermod -aG wheel john
+usermod -aG wheel john
 ```
 
 ```
@@ -183,7 +187,7 @@ to test if its correcct:
 # sudo whoami
 > root
 ```
-
+exit chroot environment:
 ```
 exit
 ```
