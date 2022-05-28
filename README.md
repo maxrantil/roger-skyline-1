@@ -207,7 +207,7 @@ Log in as your root to complete the post-installation configuration.
 ln -s  /etc/runit/sv/NetworkManager /run/runit/service/NetworkManager
 ```
 
-install ssh
+## install ssh
 ```
 sudo pacman -S openssh-runit openssh
 ```
@@ -257,4 +257,26 @@ from
 #PasswordAuthentication yes
 to
 PasswordAuthentication no
+```
+## install ufw (uncomplicated firewall)
+```
+sudo pacman -S ufw ufw-runit
+```
+sudo ln -s /etc/runit/sv/ufw /run/runit/service/ufw
+```
+to make it work:
+```
+sudo reboot
+```
+open firewall for port 61216:
+```
+sudo ufw allow 61216/tcp
+```
+for our web server we also need to open for port 80(http) and port 442(TCP/IP):
+```
+sudo ufw allow 80/tcp
+sudo ufw allow 442/tcp
+```
+```
+sudo ufw enable
 ```
