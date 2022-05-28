@@ -215,4 +215,46 @@ enable ssh:
 ```
 ln -s  /etc/runit/sv/sshd /run/runit/service/sshd
 ```
+to make it work, reboot:
+```
+sudo reboot
+```
+copy public key connect without password:
+```
+ssh-copy-id -i ~/.ssh/<pub key> <username>@<ip> -p <port>
+```
+i use 'id_rsa.pub', 'mqx', '172.20.10.4', '22'
 
+change port in /etc/ssh/sshd_config file,
+change line starting with '#Port 22'
+use wiki page (https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers) for detailed documentation.
+"The range 49152–65535 contains dynamic or private ports that cannot be registered with IANA"
+"range: 60000–61000 = Range from which Mosh – a remote-terminal application similar to SSH – typically assigns ports for ongoing sessions between Mosh servers and Mosh clients."
+```
+sudo vim /etc/ssh/sshd_config
+```
+i choose 'Port 61216', be sure to erase the '#'.
+restart sshd service:
+```
+sudo sv restart sshd
+```
+exit and log in with your new port.
+```
+ssh -t <username>@<ip> -p <port>
+```
+i use 'mqx', '172.20.10.4', '61216'
+
+for more secure ssh:
+in /etc/ssh/sshd_config file change:
+```
+from
+#PermitRootLogin prohibit-password
+to
+PermitRootLogin no
+```
+```
+from
+#PasswordAuthentication yes
+to
+PasswordAuthentication no
+```
