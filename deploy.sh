@@ -51,6 +51,10 @@ mount /dev/sda1 /mnt/boot
 mkdir -p /mnt/home
 mount /dev/sda4 /mnt/home
 
+# Make pacman colorful, concurrent downloads and Pacman eye-candy.
+grep -q "ILoveCandy" /etc/pacman.conf || sed -i "/#VerbosePkgLists/a ILoveCandy" /etc/pacman.conf
+sed -Ei "s/^#(ParallelDownloads).*/\1 = 5/;/^#Color$/s/#//" /etc/pacman.conf
+
 basestrap /mnt base runit elogind-runit linux linux-firmware vim
 
 fstabgen -U /mnt >> /mnt/etc/fstab
@@ -86,7 +90,6 @@ passwd $suser
 echo $var
 echo $var
 
-# remove the password file
 rm pwd.txt 
 rm pwd1.txt 
 
@@ -94,7 +97,8 @@ usermod -aG wheel $suser
 echo "%wheel ALL=(ALL) ALL" >> /etc/sudoers
 rm user_hold
 
-artix-chroot /mnt bash chroot.sh
+artix-chroot /mnt 
+bash chroot.sh
 
 dialog --title "Done" --msgbox "After this the computer will poweroff, unmount the .iso file and start the VM again."  10 60
 unmount -R /mnt
