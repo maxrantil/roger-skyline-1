@@ -16,8 +16,6 @@ if ! [ ${#SIZE[@]} -eq 2 ] || ! [[ ${SIZE[0]} =~ $re ]] || ! [[ ${SIZE[1]} =~ $r
     SIZE=(12 25);
 fi
 
-timedatectl set-ntp true
-
 cat <<EOF | fdisk /dev/sda
 o
 n
@@ -61,17 +59,44 @@ cat tz.tmp > /mnt/tzfinal.tmp
 rm tz.tmp
 
 mv comp /mnt/etc/hostname
+hostname=$(</mnt/etc/hostname)
+echo -e "127.0.0.1\tlocalhost\n::1\tlocalhost\n127.0.0.1\t$hostname.localdomain $hostname" >> /etc/hosts
 
-echo "127.0.0.1\tlocalhost\n::1\tlocalhost\n127.0.0.1\t$comp.localdomain $comp" >> /etc/hosts
+# create user with sudo permissions
 
-dialog --no-cancel --inputbox "Enter a name for a user with sudo permissions." 10 60 2> suser
-useradd --create-home suser
-passwd suser
-usermod -aG wheel suser
+trap "rm -f psw.txt" 2 15
+trap "rm -f psw1.txt" 2 15
+
+for ((i=1; i<=3; i++))
+do
+        dialog --no-cancel --inputbox "Enter a name for a user with sudo permissions, then choose a password." 10 60 2> user_hold
+        dialog --title "Password" --insecure --clear --passwordbox "Please enter password" 10 30 2> pwd.txt
+        dialog --title "Confirm Password" --insecure --clear --passwordbox "Please enter password" 10 30 2> pwd1.txt
+        var=$(cat pwd.txt)
+        var1=$(cat pwd1.txt)
+        if [ $var == $var1 ]
+        then
+                break
+        fi
+done
+
+suser=$(<user_hold)
+useradd --create-home $suser
+passwd $suser
+echo $var
+echo $var
+
+# remove the password file
+rm pwd.txt 
+rm pwd1.txt 
+
+usermod -aG wheel $suser
 echo "%wheel ALL=(ALL) ALL" >> /etc/sudoers
+rm user_hold
 
 artix-chroot /mnt bash chroot.sh
 
-dialog --defaultno --title "Final Qs" --yesno "Poweroff computer, unmount the .iso file"  5 30 && unmount -R /mnt && poweroff
-# dialog --defaultno --title "Final Qs" --yesno "Return to chroot environment?"  6 30 && artix-chroot /mnt
+dialog --title "Done" --msgbox "After this the computer will poweroff, unmount the .iso file and start the VM again."  10 60
+unmount -R /mnt
+poweroff
 clear
