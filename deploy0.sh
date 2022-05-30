@@ -11,7 +11,7 @@ dialog --no-cancel --inputbox "Enter partitionsize in gb, separated by space (sw
 
 IFS=' ' read -ra SIZE <<< $(cat psize)
 
-re='(?<=^| )\d+(\.\d+)?(?=$| )|(?<=^| )\.\d+(?=$| )'
+re='^\d+(\.\d)*$'
 if ! [ ${#SIZE[@]} -eq 2 ] || ! [[ ${SIZE[0]} =~ $re ]] || ! [[ ${SIZE[1]} =~ $re ]] ; then
     SIZE=(12 25);
 fi
@@ -41,7 +41,6 @@ p
 
 w
 EOF
-partprobe
 
 yes | mkfs.ext4 /dev/sda1
 yes | mkfs.ext4 /dev/sda3
