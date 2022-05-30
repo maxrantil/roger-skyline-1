@@ -11,7 +11,7 @@ dialog --no-cancel --inputbox "Enter partitionsize in gb, separated by space (sw
 
 IFS=' ' read -ra SIZE <<< $(cat psize)
 
-re='^[0-9]+$'
+re='^[0-9]+(\.[0-9]+?)?$'
 if ! [ ${#SIZE[@]} -eq 2 ] || ! [[ ${SIZE[0]} =~ $re ]] || ! [[ ${SIZE[1]} =~ $re ]] ; then
     SIZE=(12 25);
 fi
