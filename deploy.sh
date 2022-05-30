@@ -70,7 +70,7 @@ passwd suser
 usermod -aG wheel suser
 echo "%wheel ALL=(ALL) ALL" >> /etc/sudoers
 
-curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/chroot.sh > /mnt/chroot.sh && artix-chroot /mnt bash chroot.sh && rm /mnt/chroot.sh
+artix-chroot /mnt bash chroot.sh
 
 dialog --defaultno --title "Final Qs" --yesno "Poweroff computer, unmount the .iso file"  5 30 && unmount -R /mnt && poweroff
 # dialog --defaultno --title "Final Qs" --yesno "Return to chroot environment?"  6 30 && artix-chroot /mnt
