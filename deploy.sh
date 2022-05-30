@@ -52,15 +52,26 @@ mkdir -p /mnt/boot
 mount /dev/sda1 /mnt/boot
 mkdir -p /mnt/home
 mount /dev/sda4 /mnt/home
-# sudo mkfs.ext4 -L BOOT /dev/sda1
-# sudo mkfs.ext4 -L ROOT /dev/sda3
-# sudo mkfs.ext4 -L HOME /dev/sda4
-# sudo mkswap -L SWAP /dev/sda2
-# sudo swapon /dev/sda2/SWAP
-# sudo mount /dev/sda3/ROOT /mnt
-# sudo mkdir /mnt/home
-# sudo mkdir /mnt/boot
-# sudo mount /dev/sda1/BOOT /mnt/boot
-# sudo mount /dev/sda4/HOME /mnt/home
 
+basestrap /mnt base runit elogind-runit linux linux-firmware vim
 
+fstabgen -U /mnt >> /mnt/etc/fstab
+
+cat tz.tmp > /mnt/tzfinal.tmp
+rm tz.tmp
+
+mv comp /mnt/etc/hostname
+
+echo "127.0.0.1\tlocalhost\n::1\tlocalhost\n127.0.0.1\t$comp.localdomain $comp" >> /etc/hosts
+
+dialog --no-cancel --inputbox "Enter a name for a user with sudo permissions." 10 60 2> suser
+useradd --create-home suser
+passwd suser
+usermod -aG wheel suser
+echo "%wheel ALL=(ALL) ALL" >> /etc/sudoers
+
+curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/chroot.sh > /mnt/chroot.sh && artix-chroot /mnt bash chroot.sh && rm /mnt/chroot.sh
+
+dialog --defaultno --title "Final Qs" --yesno "Poweroff computer, unmount the .iso file"  5 30 && unmount -R /mnt && poweroff
+# dialog --defaultno --title "Final Qs" --yesno "Return to chroot environment?"  6 30 && artix-chroot /mnt
+clear
