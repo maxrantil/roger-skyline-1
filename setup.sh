@@ -17,10 +17,19 @@ getuserandpass() { \
                 pass2=$(dialog --no-cancel --passwordbox "Retype password." 10 60 3>&1 1>&2 2>&3 3>&1)
         done ;}
 
+
+## Script Main starts here
+####
+
+pacman -S --noconfirm sudo openssh-runit openssh
+
+ln -s  /etc/runit/sv/NetworkManager /run/runit/service/NetworkManager
+ln -s  /etc/runit/sv/sshd /run/runit/service/sshd
+
 ## create user with sudo permissions
 getuserandpass
 useradd --create-home $name
 echo -e "$pass1\n$pass1" | passwd $name
 usermod -aG wheel $name
-echo "%wheel ALL=(ALL) ALL" >> /etc/sudoers
+sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL' >> /etc/sudoers
 
