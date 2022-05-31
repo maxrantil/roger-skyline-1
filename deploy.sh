@@ -6,7 +6,6 @@
 dialog --no-cancel --inputbox "Enter a name for your computer." 10 60 2> comp
 
 dialog --defaultno --title "Time Zone select" --yesno "Do you want use zone(Europe/Helsinki)?.\n\nPress no for select your own time zone"  10 60 && echo "Europe/Helsinki" > tz.tmp || tzselect > tz.tmp
-
 dialog --no-cancel --inputbox "Enter partitionsize in gb, separated by space (swap & root)." 10 60 2>psize
 
 IFS=' ' read -ra SIZE <<< $(cat psize)
@@ -64,7 +63,7 @@ rm tz.tmp
 
 mv comp /mnt/etc/hostname
 hostname=$(</mnt/etc/hostname)
-echo -e "127.0.0.1\tlocalhost\n::1\tlocalhost\n127.0.0.1\t$hostname.localdomain $hostname" >> /etc/hosts
+echo -e "127.0.0.1\tlocalhost\n::1\t\tlocalhost\n127.0.0.1\t$hostname.localdomain $hostname" >> /etc/hosts
 
 # create user with sudo permissions
 
@@ -97,10 +96,10 @@ usermod -aG wheel $suser
 echo "%wheel ALL=(ALL) ALL" >> /etc/sudoers
 rm user_hold
 
-artix-chroot /mnt 
-bash chroot.sh
+mv chroot.sh /mnt/chroot.sh && artix-chroot /mnt bash chroot.sh && rm /mnt/chroot.sh
 
 dialog --title "Done" --msgbox "After this the computer will poweroff, unmount the .iso file and start the VM again."  10 60
 unmount -R /mnt
 poweroff
+
 clear

@@ -1,5 +1,9 @@
 # before you can run the deploy.sh script:
 
+# log in as 'root' with password 'artix'
+root
+artix
+
 pacman -Sy git --noconfirm dialog
 pacman -Syu --noconfirm dialog
 
