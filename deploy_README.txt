@@ -5,7 +5,7 @@
 root
 artix
 
-pacman -Sy --noconfirm git
+pacman -Sy --noconfirm git dialog
 pacman -Syu --noconfirm
 
 git clone https://github.com/maxrantil/roger-skyline-1

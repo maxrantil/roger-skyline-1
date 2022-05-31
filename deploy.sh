@@ -19,7 +19,9 @@ getuserandpass() { \
                 pass2=$(dialog --no-cancel --passwordbox "Retype password." 10 60 3>&1 1>&2 2>&3 3>&1)
         done ;}
 
-pacman -Sy --noconfirm dialog || { echo "Error at script start: Are you sure you're running this as the root user? Are you sure you have an internet connection?"; exit; }
+
+## Script Main starts here
+###
 
 dialog --no-cancel --inputbox "Enter a name for your computer." 10 60 2> comp
 
