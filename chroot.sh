@@ -1,4 +1,6 @@
-# continue from deploy.sh
+#!/bin/bash
+
+## continue from deploy.sh
 
 TZuser=$(cat tzfinal.tmp)
 ln -sf /usr/share/zoneinfo/$TZuser /etc/localtime
