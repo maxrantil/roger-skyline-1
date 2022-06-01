@@ -98,7 +98,7 @@ curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/chroot.s
 dialog --title "Done" --msgbox "After this the computer will poweroff, unmount the .iso file and start the VM again."  10 60
 
 #exit
-umount -R /mnt
+
 
 
 poweroff
