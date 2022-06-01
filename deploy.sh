@@ -10,8 +10,8 @@
 ## Script Main starts here
 ###
 
-pacman --noconfirm -Syu dialog || error "Are you sure you're running this as the root user, are on an Arch-based distribution and have an internet connection?"
-
+pacman --noconfirm -Sy dialog || error "Are you sure you're running this as the root user, are on an Arch-based distribution and have an internet connection?"
+pacman -S glibc lib32-glibc
 dialog --no-cancel --inputbox "Enter a name for your computer(e.g. 'desktop')." 10 60 2> comp
 dialog --defaultno --title "Time Zone select" --yesno "Do you want use zone(Europe/Helsinki)?.\n\nPress no for select your own time zone"  10 60 && echo "Europe/Helsinki" > tz.tmp || tzselect > tz.tmp
 dialog --no-cancel --inputbox "Enter partitionsize in gb, separated by space (swap & root)." 10 60 2>psize
