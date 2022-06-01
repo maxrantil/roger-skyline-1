@@ -3,6 +3,13 @@
 download the (artix-base-runit-20220123-x86_64.iso) file from http://ftp.ludd.ltu.se/artix/iso/
 and open that in a new VM (I use VirtualBox) and choose the Name of choice, Type: 'Linux', Version: 'Linux 2.6 / 3.x / 4.x (64-bit)'.
 
+## option 1) run from script
+```
+curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/deploy.sh > deploy.sh
+bash deploy.sh
+```
+
+## option2) manually
 ## to check partitions.
 first command: 
 ```
