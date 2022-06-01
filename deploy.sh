@@ -64,7 +64,7 @@ rm psize
 grep -q "ILoveCandy" /etc/pacman.conf || sed -i "/#VerbosePkgLists/a ILoveCandy" /etc/pacman.conf
 sed -Ei "s/^#(ParallelDownloads).*/\1 = 5/;/^#Color$/s/#//" /etc/pacman.conf
 
-# Add mirrors
+# Add key-ring
 pacman --noconfirm --needed -S artix-keyring artix-archlinux-support >/dev/null 2>&1
 			for repo in extra community; do
 				grep -q "^\[$repo\]" /etc/pacman.conf ||
@@ -97,6 +97,7 @@ curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/chroot.s
 
 dialog --title "Done" --msgbox "After this the computer will poweroff, unmount the .iso file and start the VM again."  10 60
 
+exit
 umount -R /mnt
 
 clear

@@ -13,7 +13,7 @@ echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
 echo "en_US ISO-8859-1" >> /etc/locale.gen
 locale-gen
 
-pacman -Syu --noconfirm networkmanager networkmanager-runit network-manager-applet linux-headers
+pacman -Syu --noconfirm networkmanager networkmanager-runit network-manager-applet
 
 pacman -Syu --noconfirm  grub && grub-install --target=i386-pc /dev/sda && grub-mkconfig -o /boot/grub/grub.cfg
 
