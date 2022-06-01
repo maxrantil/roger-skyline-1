@@ -9,7 +9,8 @@
 
 ## Script Main starts here
 ###
-
+pacman-key --init
+pacman-key --populate
 pacman --noconfirm -Sy dialog || error "Are you sure you're running this as the root user, are on an Arch-based distribution and have an internet connection?"
 pacman -S glibc lib32-glibc
 dialog --no-cancel --inputbox "Enter a name for your computer(e.g. 'desktop')." 10 60 2> comp
