@@ -15,7 +15,9 @@ locale-gen
 
 pacman -Sy --noconfirm networkmanager networkmanager-runit network-manager-applet
 
-pacman -S --noconfirm grub && grub-install --target=i386-pc /dev/sda && grub-mkconfig -o /boot/grub/grub.cfg
+pacman -S --noconfirm grub dialog
+grub-install --target=i386-pc /dev/sda
+grub-mkconfig -o /boot/grub/grub.cfg
 
 spass1=$(dialog --no-cancel --title "Change root password" --passwordbox "Enter a new root password." 10 60 3>&1 1>&2 2>&3 3>&1)
 spass2=$(dialog --no-cancel --title "Change root password" --passwordbox "Retype password." 10 60 3>&1 1>&2 2>&3 3>&1)
@@ -26,5 +28,9 @@ while ! [ "$spass1" = "$spass2" ]; do
 done;
 echo -e "$spass1\n$spass1" | passwd
 
-# exit
+exit
 umount -R /mnt
+
+dialog --title "Done" --msgbox "After this the computer will poweroff, unmount the .iso file and start the VM again."  10 60
+
+poweroff

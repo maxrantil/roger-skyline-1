@@ -95,11 +95,3 @@ hostname=$(</mnt/etc/hostname)
 echo -e "127.0.0.1\tlocalhost\n::1\t\tlocalhost\n127.0.0.1\t$hostname.localdomain\t$hostname" >> /mnt/etc/hosts
 
 curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/chroot.sh > /mnt/chroot.sh && artix-chroot /mnt bash chroot.sh && rm /mnt/chroot.sh
-
-dialog --title "Done" --msgbox "After this the computer will poweroff, unmount the .iso file and start the VM again."  10 60
-
-#exit
-
-
-
-poweroff
