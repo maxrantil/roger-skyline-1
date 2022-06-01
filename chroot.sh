@@ -29,8 +29,3 @@ done;
 echo -e "$spass1\n$spass1" | passwd
 
 exit
-umount -R /mnt
-
-dialog --title "Done" --msgbox "After this the computer will poweroff, unmount the .iso file and start the VM again."  10 60
-
-poweroff
