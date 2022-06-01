@@ -65,24 +65,6 @@ rm psize
 grep -q "ILoveCandy" /etc/pacman.conf || sed -i "/#VerbosePkgLists/a ILoveCandy" /etc/pacman.conf
 sed -Ei "s/^#(ParallelDownloads).*/\1 = 5/;/^#Color$/s/#//" /etc/pacman.conf
 
-# Add key-ring
-#pacman --noconfirm --needed -S artix-keyring artix-archlinux-support >/dev/null 2>&1
-#			for repo in extra community; do
-#				grep -q "^\[$repo\]" /etc/pacman.conf ||
-#					echo "[$repo]
-#Include = /etc/pacman.d/mirrorlist-arch" >> /etc/pacman.conf
-#			done
-#			pacman -Sy >/dev/null 2>&1
-#			pacman-key --populate archlinux >/dev/null 2>&1
-#echo "Server = https://ftp.ludd.ltu.se/mirrors/artix/$repo/os/$arch" > mirrors
-#echo "Server = https://mirrors.dotsrc.org/artix-linux/repos/$repo/os/$arch" >> mirrors
-#echo "Server = https://mirror.one.com/artix/$repo/os/$arch" >> mirrors
-#echo "Server = https://mirror.clarkson.edu/artix-linux/repos/$repo/os/$arch" >> mirrors
-#echo "Server = http://ftp.ntua.gr/pub/linux/artix-linux/$repo/os/$arch" >> mirrors
-# Add them to pacman mirrors
-#tmp="$(mktemp)" && cat mirrors /etc/pacman.d/mirrorlist >"$tmp" && mv "$tmp" /etc/pacman.d/mirrorlist
-#rm mirrors
-
 basestrap /mnt base base-devel runit elogind-runit linux linux-firmware vim
 
 fstabgen -U /mnt >> /mnt/etc/fstab

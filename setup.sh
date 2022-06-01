@@ -21,6 +21,24 @@ getuserandpass() { \
 ## Script Main starts here
 ####
 
+# Add key-ring
+pacman --noconfirm --needed -S artix-keyring artix-archlinux-support >/dev/null 2>&1
+			for repo in extra community; do
+				grep -q "^\[$repo\]" /etc/pacman.conf ||
+					echo "[$repo]
+Include = /etc/pacman.d/mirrorlist-arch" >> /etc/pacman.conf
+			done
+			pacman -Sy >/dev/null 2>&1
+			pacman-key --populate archlinux >/dev/null 2>&1
+#echo "Server = https://ftp.ludd.ltu.se/mirrors/artix/$repo/os/$arch" > mirrors
+#echo "Server = https://mirrors.dotsrc.org/artix-linux/repos/$repo/os/$arch" >> mirrors
+#echo "Server = https://mirror.one.com/artix/$repo/os/$arch" >> mirrors
+#echo "Server = https://mirror.clarkson.edu/artix-linux/repos/$repo/os/$arch" >> mirrors
+#echo "Server = http://ftp.ntua.gr/pub/linux/artix-linux/$repo/os/$arch" >> mirrors
+# Add them to pacman mirrors
+#tmp="$(mktemp)" && cat mirrors /etc/pacman.d/mirrorlist >"$tmp" && mv "$tmp" /etc/pacman.d/mirrorlist
+#rm mirrors
+
 pacman -S --noconfirm sudo openssh-runit openssh
 
 ln -s  /etc/runit/sv/NetworkManager /run/runit/service/NetworkManager
