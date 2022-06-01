@@ -26,4 +26,4 @@ while ! [ "$spass1" = "$spass2" ]; do
 done;
 echo -e "$spass1\n$spass1" | passwd
 
-exit
+# exit
