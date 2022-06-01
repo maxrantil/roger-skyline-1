@@ -10,7 +10,7 @@
 ## Script Main starts here
 ###
 
-pacman --noconfirm -Sy dialog || error "Are you sure you're running this as the root user, are on an Arch-based distribution and have an internet connection?"
+pacman --noconfirm -Syu dialog || error "Are you sure you're running this as the root user, are on an Arch-based distribution and have an internet connection?"
 
 dialog --no-cancel --inputbox "Enter a name for your computer(e.g. 'desktop')." 10 60 2> comp
 dialog --defaultno --title "Time Zone select" --yesno "Do you want use zone(Europe/Helsinki)?.\n\nPress no for select your own time zone"  10 60 && echo "Europe/Helsinki" > tz.tmp || tzselect > tz.tmp
