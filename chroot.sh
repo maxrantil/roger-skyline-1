@@ -42,13 +42,6 @@ locale-gen
 
 pacman -Sy --noconfirm networkmanager networkmanager-runit network-manager-applet openssh-runit openssh ufw ufw-runit
 
-
-#this is not sure working
-ln -s /etc/runit/sv/NetworkManager /run/runit/service/NetworkManager
-ln -s /etc/runit/sv/sshd /run/runit/service/sshd
-ln -s /etc/runit/sv/ufw /run/runit/service/ufw
-#unitl here
-
 pacman -S --noconfirm grub dialog
 grub-install --target=i386-pc /dev/sda
 grub-mkconfig -o /boot/grub/grub.cfg

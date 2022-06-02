@@ -80,6 +80,6 @@ curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/chroot.s
 
 umount -R /mnt
 
-dialog --title "Done" --msgbox "After this the computer will poweroff, unmount the .iso file and start the VM again."  10 60
+dialog --title "Done" --msgbox "After this the computer will poweroff, unmount the .iso file, change the network configuration to Bridged Adapter and start the VM again."  10 60
 
 poweroff
