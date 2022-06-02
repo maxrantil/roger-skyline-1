@@ -13,7 +13,7 @@ Include = /etc/pacman.d/mirrorlist-arch" >> /etc/pacman.conf
 			done
 			pacman -Sy >/dev/null 2>&1
 			pacman-key --populate archlinux >/dev/null 2>&1
-;}
+}
 
 ## Script Main starts here
 ####
@@ -33,13 +33,6 @@ ln -s /etc/runit/sv/NetworkManager /run/runit/service/NetworkManager
 ln -s /etc/runit/sv/sshd /run/runit/service/sshd
 ln -s /etc/runit/sv/ufw /run/runit/service/ufw
 
-## create user with sudo permissions
-#getuserandpass
-#useradd --create-home $name
-#echo -e "$pass1\n$pass1" | passwd $name
-#usermod -aG wheel $name
-#sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL' >> /etc/sudoers
-
-
 dialog --title "Setup Done" --msgbox "After this the computer will reboot."  10 60
-sudo reboot
+
+#sudo reboot

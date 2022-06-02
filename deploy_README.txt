@@ -5,9 +5,5 @@
 root
 artix
 
-pacman -Sy --noconfirm git dialog
-pacman -Syu --noconfirm
-
-git clone https://github.com/maxrantil/roger-skyline-1
-cd roger-skyline-1
-./deploy.sh
+curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/deploy.sh > deploy.sh
+bash deploy.sh
