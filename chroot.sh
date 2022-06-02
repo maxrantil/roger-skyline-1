@@ -36,13 +36,15 @@ rm tzfinal.tmp
 hwclock --systohc
 
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
-#echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
-sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8' >> /etc/locale.gen
-#echo "en_US ISO-8859-1" >> /etc/locale.gen
-sed -i 's/^#en_US ISO-8859-1/en_US ISO-8859-1' >> /etc/locale.gen
+sed -i '/#en_US.UTF-8 UTF-8/s/^#//g' /etc/locale.gen
+sed -i '/#en_US ISO-8859-1/s/^#//g' /etc/locale.gen
 locale-gen
 
-pacman -Sy --noconfirm networkmanager networkmanager-runit network-manager-applet
+pacman -Sy --noconfirm networkmanager networkmanager-runit network-manager-applet openssh-runit openssh ufw ufw-runit
+
+ln -s /etc/runit/sv/NetworkManager /run/runit/service/NetworkManager
+ln -s /etc/runit/sv/sshd /run/runit/service/sshd
+ln -s /etc/runit/sv/ufw /run/runit/service/ufw
 
 pacman -S --noconfirm grub dialog
 grub-install --target=i386-pc /dev/sda
@@ -55,6 +57,10 @@ getuserandpasswd
 useradd --create-home $name
 echo -e "$pass1\n$pass1" | passwd $name
 usermod -aG wheel $name
-sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL' >> /etc/sudoers
+sed -i '/# %wheel ALL=(ALL:ALL) ALL/s/^# //g' /etc/sudoers
+
+#DNS (google)
+echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" >> /etc/resolv.conf
+
 
 exit
