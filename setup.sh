@@ -45,9 +45,9 @@ ln -s  /etc/runit/sv/NetworkManager /run/runit/service/NetworkManager
 ln -s  /etc/runit/sv/sshd /run/runit/service/sshd
 
 ## create user with sudo permissions
-getuserandpass
-useradd --create-home $name
-echo -e "$pass1\n$pass1" | passwd $name
-usermod -aG wheel $name
-sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL' >> /etc/sudoers
+#getuserandpass
+#useradd --create-home $name
+#echo -e "$pass1\n$pass1" | passwd $name
+#usermod -aG wheel $name
+#sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL' >> /etc/sudoers
 
