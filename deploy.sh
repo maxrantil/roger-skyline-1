@@ -76,6 +76,7 @@ mv comp /mnt/etc/hostname
 hostname=$(</mnt/etc/hostname)
 echo -e "127.0.0.1\tlocalhost\n::1\t\tlocalhost\n127.0.0.1\t$hostname.localdomain\t$hostname" >> /mnt/etc/hosts
 
+curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/setup.sh > /mnt/setup.sh
 curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/chroot.sh > /mnt/chroot.sh && artix-chroot /mnt bash chroot.sh && rm /mnt/chroot.sh
 
 umount -R /mnt
