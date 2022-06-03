@@ -24,7 +24,10 @@ if ! [ ${#SIZE[@]} -eq 2 ] || ! [[ ${SIZE[0]} =~ $re ]] || ! [[ ${SIZE[1]} =~ $r
     SIZE=(12 25);
 fi
 
-cat <<EOF | fdisk /dev/sda
+#for virtualBox /dev/sda
+#for virtual manager /dev/sr0
+
+cat <<EOF | fdisk /dev/sr0
 o
 n
 p
@@ -48,16 +51,16 @@ p
 w
 EOF
 
-yes | mkfs.ext4 /dev/sda1
-yes | mkfs.ext4 /dev/sda3
-yes | mkfs.ext4 /dev/sda4
-mkswap /dev/sda2
-swapon /dev/sda2
-mount /dev/sda3 /mnt
+yes | mkfs.ext4 /dev/sr01
+yes | mkfs.ext4 /dev/sr03
+yes | mkfs.ext4 /dev/sr04
+mkswap /dev/sr02
+swapon /dev/sr02
+mount /dev/sr03 /mnt
 mkdir -p /mnt/boot
-mount /dev/sda1 /mnt/boot
+mount /dev/sr01 /mnt/boot
 mkdir -p /mnt/home
-mount /dev/sda4 /mnt/home
+mount /dev/sr04 /mnt/home
 
 rm psize
 
