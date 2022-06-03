@@ -29,6 +29,10 @@ getuserandpasswd() { \
 ## continue from deploy.sh
 ###
 
+# Make pacman colorful, concurrent downloads and Pacman eye-candy.
+grep -q "ILoveCandy" /etc/pacman.conf || sed -i "/#VerbosePkgLists/a ILoveCandy" /etc/pacman.conf
+sed -Ei "s/^#(ParallelDownloads).*/\1 = 5/;/^#Color$/s/#//" /etc/pacman.conf
+
 TZuser=$(cat tzfinal.tmp)
 ln -sf /usr/share/zoneinfo/$TZuser /etc/localtime
 rm tzfinal.tmp
