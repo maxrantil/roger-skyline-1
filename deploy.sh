@@ -33,7 +33,7 @@ fi
 #for virtual manager /dev/vda
 #disk=$(lsblk | awk '/G/ {print $1}')
 
-cat <<EOF | fdisk /dev/vda
+cat <<EOF | fdisk /dev/sda
 o
 n
 p
