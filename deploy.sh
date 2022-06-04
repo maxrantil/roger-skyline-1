@@ -88,9 +88,9 @@ umount -R /mnt
 
 dialog --title "Done" --msgbox "After this the computer will poweroff, unmount the .iso file, change the network configuration to Bridged Adapter before starting again"  10 60
 
-#poweroff
+poweroff
 
 #echo "root"
 #echo "$spass1"
 
-curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/setup.sh > setup.sh
+#curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/setup.sh > setup.sh
