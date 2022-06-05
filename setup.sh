@@ -25,10 +25,15 @@ securessh() { \
 		if [ $flag -lt 1 ]; then
 			sed -i '/#PubkeyAuthentication yes/s/^#//g' /etc/ssh/sshd_config
 		fi
-		flag=$(dialog --title "Secure ssh" --yesno "Turn of password authentication?" 0 0)
+		flag=$(dialog --title "Secure ssh" --yesno "Turn off password authentication?" 0 0)
 		if [ $flag -lt 1 ]; then
 			sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication no/g' /etc/ssh/sshd_config
-		fi	
+		fi
+		flag=$(dialog --title "Secure ssh" --yesno "Turn off root login?" 0 0)
+		if [ $flag -lt 1 ]; then
+			sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/g' /etc/ssh/sshd_config
+		fi
+		sv restart sshd
 			;}
 
 getip() { \
@@ -63,6 +68,7 @@ sed -i '/# %wheel ALL=(ALL:ALL) ALL/s/^# //g' /etc/sudoers
 
 getip
 
+echo $device device
 echo $gateway gateway
 echo $ethernet ethernet
 echo $broadcast broadcast
@@ -75,29 +81,44 @@ echo $eth_mask ethernet/netmask
 #  ipv4.dns-search "DOMAIN_NAME"
 #  ipv4.method "manual"
 
-#nmcli con mod "Wired connection 1" ipv4.address "172.20.10.4/30" ipv4.gateway "172.20.10.1" ipv4.dns "8.8.8.8, 8.8.4.4" ipv4.dns-search "google" ipv4.method "manual"
+#nmcli con mod "Wired connection 1" ipv4.address "172.20.10.4/30" ipv4.gateway "172.20.10.1" ipv4.dns "8.8.8.8, 8.8.4.4" ipv4.method "manual"
 #dialog --title "Setup Done" --msgbox "After this the computer will reboot."  10 60
 #nmcli con mod "Wired connection 1" ipv4.address "172.20.10.14/30" ipv4.gateway "172.20.10.1" ipv4.method "manual"
+#restart NetworkManager
 
 ## Secure ssh
 ###
 securessh
 
 
+## Enable Firewall (ufw)
+###
+#open firewall for ssh port:
+ufw allow ${port}/tcp
+
+#for our web server we also need to open for port 80(http) and port 442(TCP/IP):
+ufw allow 80/tcp
+ufw allow 442/tcp
+
+#enable the firewall:
+ufw --force enable
+
+
+
+##Protect against a DDos attack
+###
+pacman -S --noconfirm iptables iptables-runit fail2ban fail2ban-runit apache apache-runit
+ln -s /etc/runit/sv/iptables/ /run/runit/service/
+ln -s /etc/runit/sv/fail2ban/ /run/runit/service/
+ln -s /etc/runit/sv/apache/ /run/runit/service/
+
 ## List all services
 ###
-# Install Rust
-#cat <<EOF | curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh
-#1
-#EOF
-#source $HOME/.cargo/env
-## Install rsv (to list all running processes)
-#git clone https://github.com/JojiiOfficial/rsv
-#cd rsv
-#cargo build --release
-##sudo rsv list --enabled --down # list all enabled services which aren't running
-##sudo rsv list --disabled/--enabled # list all disabled/enabled services 
-##sudo rsv enable cupsd # enabled cupsd
-##sudo rsv start cupsd # start cupsd service (enable if service is disabled)
+# pstree
+
+## Cronie
+###
+pacman -S cronie
+
 
 #reboot
