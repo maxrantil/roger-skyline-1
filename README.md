@@ -1,7 +1,7 @@
 # roger-skyline-1 on Artix(runit) Linux
 
 download the (artix-base-runit-20220123-x86_64.iso) file from http://ftp.ludd.ltu.se/artix/iso/
-and open that in a new VM (I use VirtualBox) and choose the Name of choice, Type: 'Linux', Version: 'Linux 2.6 / 3.x / 4.x (64-bit)'.
+and open that in a new VM (I use VirtualBox) and choose the Name roger-skyline-1 Type: 'Linux', Version: 'Linux 2.6 / 3.x / 4.x (64-bit)'.
 
 Login as 'root' with passwork 'artix'
 ```
@@ -56,7 +56,7 @@ enter
 w
 ```
 
-I choosed to do 4 partitions for this exercise.
+I chose to do 4 partitions for this exercise.
 /dev/sda1 = /mnt/boot
 /dev/sda2 = swap
 /dev/sda3 = /mnt
@@ -227,7 +227,7 @@ Log in as your root to complete the post-installation configuration.
 log in with your user:
 ```
 username
-and the password you choosed for it
+and the password you chose for it
 ```
 
 enable NetworkManager for internet access:
