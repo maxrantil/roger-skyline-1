@@ -18,8 +18,8 @@ bash deploy.sh
 
 # option 2: manually
 
-to check partitions what to use:
-first command 
+write paritions
+look for it:
 ```
 lsblk
 ```
@@ -29,8 +29,31 @@ fdisk -l
 ```
 
 for me it is /dev/sda
+to start the process:
 ```
 fdisk /dev/sda
+o
+n
+p
+enter
+enter
++1G
+n
+p
+enter
+enter
++2.2G
+n
+p
+enter
+enter
++4.2G
+n
+p
+enter
+enter
+enter
+w
 ```
 
 I choosed to do 4 partitions for this exercise.
@@ -40,21 +63,16 @@ I choosed to do 4 partitions for this exercise.
 /dev/sda4 = /mnt/home
 
 first partion = boot partion (good size is 1G)
-second partition = swap partition (115-120% of base memory)
+second partition = swap partition (good size 115-120% of base memory)
 third partiton = root partion, this is where all programs is gonna be. (4.2G)
 fourth partiton = home partition, where you have all your documents and the rest of stuff (good size, all the rest)
 
-commands:
-p = print
-n = new
-at the end:
-w = write (this will wipe everything)
-d = delete (if you do something wrong)
-
 make filesystems:
-on three partitions e.g. /dev/sda1 & /dev/sda3 & /dev/sda4
+on three partitions
 ```
-mkfs.ext4 <partion>     
+mkfs.ext4 /dev/sda1
+mkfs.ext4 /dev/sda3
+mkfs.ext4 /dev/sda4
 ```
 
 make swap partion on one of them e.g. /dev/sda/2
