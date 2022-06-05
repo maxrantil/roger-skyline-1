@@ -17,23 +17,11 @@ getuserandpasswd() { \
                 pass2=$(dialog --no-cancel --passwordbox "Retype password." 10 60 3>&1 1>&2 2>&3 3>&1)
         done ;}
 
-addmirrors() { \
-		echo "Server = https://ftp.ludd.ltu.se/mirrors/artix/$repo/os/$arch" > mirrors
-		echo "Server = https://mirrors.dotsrc.org/artix-linux/repos/$repo/os/$arch" >> mirrors
-		echo "Server = https://mirror.one.com/artix/$repo/os/$arch" >> mirrors
-		echo "Server = https://mirror.clarkson.edu/artix-linux/repos/$repo/os/$arch" >> mirrors
-		echo "Server = http://ftp.ntua.gr/pub/linux/artix-linux/$repo/os/$arch" >> mirrors
-		# Add them to pacman mirrors
-		tmp="$(mktemp)" && cat mirrors /etc/pacman.d/mirrorlist >"$tmp" && mv "$tmp" /etc/pacman.d/mirrorlist
-		rm mirrors }
-
-
 ## Script Main starts here
 ####
 
 ## Install packages and enable them
 ###
-addmirrors
 
 pacman -S --noconfirm openssh-runit ufw ufw-runit sudo
 
@@ -47,6 +35,10 @@ useradd --create-home $name
 echo -e "$pass1\n$pass1" | passwd $name
 usermod -aG wheel $name
 sed -i '/# %wheel ALL=(ALL:ALL) ALL/s/^# //g' /etc/sudoers
+
+## Secure ssh
+###
+sed -i '/#Port 22/s/^# //g' /etc/ssh/sshd_config
 
 ## Static IP
 ###
@@ -89,5 +81,5 @@ echo $eth_mask ethernet/netmask
 ##sudo rsv enable cupsd # enabled cupsd
 ##sudo rsv start cupsd # start cupsd service (enable if service is disabled)
 
-reboot
+#reboot
 
