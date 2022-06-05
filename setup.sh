@@ -17,27 +17,28 @@ getuserandpasswd() { \
                 pass2=$(dialog --no-cancel --passwordbox "Retype password." 10 60 3>&1 1>&2 2>&3 3>&1)
         done ;}
 
-refreshkeys() { \
-#	dialog --infobox "Enabling Arch Repositories..." 4 40
-	pacman -Sy --noconfirm artix-keyring artix-archlinux-support
-	pacman -Su --noconfirm
-	pacman-key --populate archlinux
-}
+addmirrors() { \
+		echo "Server = https://ftp.ludd.ltu.se/mirrors/artix/$repo/os/$arch" > mirrors
+		echo "Server = https://mirrors.dotsrc.org/artix-linux/repos/$repo/os/$arch" >> mirrors
+		echo "Server = https://mirror.one.com/artix/$repo/os/$arch" >> mirrors
+		echo "Server = https://mirror.clarkson.edu/artix-linux/repos/$repo/os/$arch" >> mirrors
+		echo "Server = http://ftp.ntua.gr/pub/linux/artix-linux/$repo/os/$arch" >> mirrors
+		# Add them to pacman mirrors
+		tmp="$(mktemp)" && cat mirrors /etc/pacman.d/mirrorlist >"$tmp" && mv "$tmp" /etc/pacman.d/mirrorlist
+		rm mirrors }
+
 
 ## Script Main starts here
 ####
 
-# Add key-ring
-refreshkeys
-echo "Server = https://ftp.ludd.ltu.se/mirrors/artix/$repo/os/$arch" > mirrors
-echo "Server = https://mirrors.dotsrc.org/artix-linux/repos/$repo/os/$arch" >> mirrors
-echo "Server = https://mirror.one.com/artix/$repo/os/$arch" >> mirrors
-echo "Server = https://mirror.clarkson.edu/artix-linux/repos/$repo/os/$arch" >> mirrors
-echo "Server = http://ftp.ntua.gr/pub/linux/artix-linux/$repo/os/$arch" >> mirrors
-# Add them to pacman mirrors
-tmp="$(mktemp)" && cat mirrors /etc/pacman.d/mirrorlist >"$tmp" && mv "$tmp" /etc/pacman.d/mirrorlist
-rm mirrors
+## Install packages and enable them
+###
+addmirrors
 
+pacman -S --noconfirm openssh-runit openssh ufw ufw-runit sudo
+
+ln -s /etc/runit/sv/sshd /run/runit/service/sshd
+ln -s /etc/runit/sv/ufw /run/runit/service/ufw
 
 ## Create user with sudo rights
 ###
@@ -46,13 +47,6 @@ useradd --create-home $name
 echo -e "$pass1\n$pass1" | passwd $name
 usermod -aG wheel $name
 sed -i '/# %wheel ALL=(ALL:ALL) ALL/s/^# //g' /etc/sudoers
-
-## Install packages and enable them
-###
-pacman -S --noconfirm openssh-runit openssh ufw ufw-runit
-
-ln -s /etc/runit/sv/sshd /run/runit/service/sshd
-ln -s /etc/runit/sv/ufw /run/runit/service/ufw
 
 ## Static IP
 ###
@@ -67,7 +61,7 @@ echo $ethernet ethernet
 echo $broadcast broadcast
 echo $eth_mask ethernet/netmask
 
-dialog --"Set static ip"
+#dialog --"Set static ip"
 #nmcli con mod "Wired connection 1"
 #  ipv4.addresses "HOST_IP_ADDRESS/IP_NETMASK_BIT_COUNT"
 #  ipv4.gateway "IP_GATEWAY"

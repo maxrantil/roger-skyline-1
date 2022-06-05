@@ -57,7 +57,6 @@ p
 
 w
 EOF
-partprobe
 
 yes | mkfs.ext4 /dev/${disk}4
 yes | mkfs.ext4 /dev/${disk}3
@@ -72,7 +71,8 @@ mount /dev/${disk}4 /mnt/home
 
 rm psize
 
-basestrap /mnt base base-devel runit elogind-runit linux linux-firmware vim
+basestrap /mnt base runit elogind-runit linux linux-firmware vim
+#can add 'base-devel'
 
 fstabgen -U /mnt >> /mnt/etc/fstab
 
