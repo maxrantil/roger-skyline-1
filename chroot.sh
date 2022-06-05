@@ -30,7 +30,7 @@ sed -i '/#en_US.UTF-8 UTF-8/s/^#//g' /etc/locale.gen
 sed -i '/#en_US ISO-8859-1/s/^#//g' /etc/locale.gen
 locale-gen
 
-pacman -Sy --noconfirm networkmanager networkmanager-runit network-manager-applet openssh-runit openssh ufw ufw-runit
+pacman -Sy --noconfirm networkmanager networkmanager-runit network-manager-applet
 
 pacman -S --noconfirm grub dialog
 grub-install --target=i386-pc /dev/sda
