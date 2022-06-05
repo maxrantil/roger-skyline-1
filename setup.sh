@@ -35,7 +35,7 @@ addmirrors() { \
 ###
 addmirrors
 
-pacman -S --noconfirm openssh-runit openssh ufw ufw-runit sudo
+pacman -S --noconfirm openssh-runit ufw ufw-runit sudo
 
 ln -s /etc/runit/sv/sshd /run/runit/service/sshd
 ln -s /etc/runit/sv/ufw /run/runit/service/ufw
@@ -89,4 +89,5 @@ echo $eth_mask ethernet/netmask
 ##sudo rsv enable cupsd # enabled cupsd
 ##sudo rsv start cupsd # start cupsd service (enable if service is disabled)
 
-#reboot
+reboot
+

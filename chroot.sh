@@ -38,3 +38,4 @@ changerootpasswd
 echo -e "$spass1\n$spass1" | passwd
 
 exit
+

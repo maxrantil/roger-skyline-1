@@ -71,8 +71,7 @@ mount /dev/${disk}4 /mnt/home
 
 rm psize
 
-basestrap /mnt base runit elogind-runit linux linux-firmware vim
-#can add 'base-devel'
+basestrap /mnt base base-devel runit elogind-runit linux linux-firmware vim
 
 fstabgen -U /mnt >> /mnt/etc/fstab
 
@@ -91,7 +90,3 @@ dialog --title "Done" --msgbox "After this the computer will poweroff, unmount t
 
 poweroff
 
-#echo "root"
-#echo "$spass1"
-
-#curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/setup.sh > setup.sh
