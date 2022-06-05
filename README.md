@@ -106,7 +106,7 @@ mount home partion:
 mount /dev/sda4 /mnt/home
 ```
 
-# install Artix:
+## install Artix:
 ```
 basestrap /mnt base base-devel runit elogind-runit linux linux-firmware vim
 ```
@@ -121,7 +121,10 @@ change root to make it boot from the right place:
 artix-chroot /mnt
 ```
 
-# install what you need:
+
+# NetworkManager and grub:
+
+install NetworkManager
 ```
 pacman -Sy networkmanager networkmanager-runit network-manager-applet
 ```
