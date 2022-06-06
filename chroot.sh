@@ -31,8 +31,8 @@ sed -i '/#en_US ISO-8859-1/s/^#//g' /etc/locale.gen
 locale-gen
 
 pacman -Sy --noconfirm networkmanager networkmanager-runit network-manager-applet
-pacman -S --noconfirm grub && grub-install --target=i386-pc /dev/${disk} && grub-mkconfig -o /boot/grub/grub.cfg
-pacman -S --noconfirm dialog
+pacman -Sy --noconfirm grub && grub-install --target=i386-pc /dev/${disk} && grub-mkconfig -o /boot/grub/grub.cfg
+pacman -Sy --noconfirm dialog
 
 changerootpasswd
 echo -e "$spass1\n$spass1" | passwd
