@@ -33,7 +33,6 @@ securessh() { \
 		if [ $flag -lt 1 ]; then
 			sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/g' /etc/ssh/sshd_config
 		fi
-		sv restart sshd
 			;}
 
 getip() { \
@@ -89,7 +88,7 @@ echo $eth_mask ethernet/netmask
 ## Secure ssh
 ###
 securessh
-
+sv restart sshd
 
 ## Enable Firewall (ufw)
 ###
