@@ -27,9 +27,9 @@ fi
 
 #for virtualBox /dev/sda
 #for virtual manager /dev/vda
-disk=$(lsblk | awk '/G/ {print $1}')
+#disk=$(lsblk | awk '/G/ {print $1}')
 
-cat <<EOF | fdisk /dev/${disk}
+cat <<EOF | fdisk /dev/sda
 o
 n
 p
@@ -54,16 +54,16 @@ p
 w
 EOF
 
-yes | mkfs.ext4 /dev/${disk}4
-yes | mkfs.ext4 /dev/${disk}3
-yes | mkfs.ext4 /dev/${disk}1
-mkswap /dev/${disk}2
-swapon /dev/${disk}2
-mount /dev/${disk}3 /mnt
+yes | mkfs.ext4 /dev/sda4
+yes | mkfs.ext4 /dev/sda3
+yes | mkfs.ext4 /dev/sda1
+mkswap /dev/sda2
+swapon /dev/sda2
+mount /dev/sda3 /mnt
 mkdir -p /mnt/boot
-mount /dev/${disk}1 /mnt/boot
+mount /dev/sda1 /mnt/boot
 mkdir -p /mnt/home
-mount /dev/${disk}4 /mnt/home
+mount /dev/sda4 /mnt/home
 
 rm psize
 
