@@ -34,7 +34,7 @@ securessh() { \
 
 getip() { \
 		device=$(nmcli con show | awk '/DEVICE/ {getline ; print $NF}')
-		device_name=$(nmcli con show | awk '/DEVICE/ {getline ; print $1" "$2" "$3}')
+		con_name=$(nmcli con show | awk '/DEVICE/ {getline ; print $1" "$2" "$3}')
 		gateway=$(ip r | awk '/default/ {print $3}')
 		ethernet=$(ip r | awk '/'$gateway'/ {print $9}')
 		broadcast=$(ip a | awk '/'$ethernet'/ {print $4}')
@@ -51,6 +51,8 @@ pacman -S --noconfirm openssh-runit ufw ufw-runit
 
 ln -s /etc/runit/sv/sshd /run/runit/service/
 ln -s /etc/runit/sv/ufw /run/runit/service/
+sv restart sshd
+sv restart ufw
 
 ## Create user with sudo rights
 ###
@@ -62,15 +64,14 @@ sed -i '/# %wheel ALL=(ALL:ALL) ALL/s/^# //g' /etc/sudoers
 
 ## Static IP
 ###
-
 getip
-
-echo $device device
-echo $gateway gateway
-echo $ethernet ethernet
-echo $broadcast broadcast
-echo $eth_mask ethernet/netmask
-nmcli con mod $name ipv4.address "${ethernet}/30" ipv4.gateway $gateway ipv4.dns "8.8.8.8, 8.8.4.4" ipv4.method "manual"
+#echo $device device
+#echo $gateway gateway
+#echo $ethernet ethernet
+#echo $broadcast broadcast
+#echo $eth_mask ethernet/netmask
+nmcli con mod "$con_name" ipv4.addr "${ethernet}/30" ipv4.gateway $gateway ipv4.dns "8.8.8.8, 8.8.4.4" ipv4.method "manual"
+nmcli con reload
 sv restart NetworkManager
 
 ## Secure ssh
@@ -105,7 +106,7 @@ ln -s /etc/runit/sv/apache/ /run/runit/service/
 
 ## Cronie
 ###
-pacman -S cronie
+pacman -S --noconfirm cronie
 
 
 #reboot
