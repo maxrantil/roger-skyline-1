@@ -70,7 +70,7 @@ getip
 #echo $ethernet ethernet
 #echo $broadcast broadcast
 #echo $eth_mask ethernet/netmask
-nmcli con mod "$con_name" ipv4.addr "${ethernet}/30" ipv4.gateway $gateway ipv4.dns "8.8.8.8, 8.8.4.4" ipv4.method "manual"
+nmcli con mod $con_name ipv4.addr "${ethernet}/30" ipv4.gateway $gateway ipv4.dns "8.8.8.8, 8.8.4.4" ipv4.method "manual"
 nmcli con reload
 sv restart NetworkManager
 
@@ -101,6 +101,19 @@ ln -s /etc/runit/sv/fail2ban/ /run/runit/service/
 ln -s /etc/runit/sv/apache/ /run/runit/service/
 
 cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+
+echo "[sshd]" > /etc/fail2ban/jail.d/sshd.local
+echo "enabled = true" >> /etc/fail2ban/jail.d/sshd.local
+echo "logpath = /var/log/httpd/error_log" >> /etc/fail2ban/jail.d/sshd.local
+echo "bantime = 300" >> /etc/fail2ban/jail.d/sshd.local
+
+
+# Check why it wont work
+# /usr/bin/fail2ban-client -v -v start
+
+# Unban 
+# fail2ban-client set jail-name unbanip <ip>
+# fail2ban-client unban --all
 
 # To test if it works you can use Slowloris
 #pacman -S --nnoconfirm python-pip
