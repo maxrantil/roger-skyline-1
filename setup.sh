@@ -100,6 +100,13 @@ ln -s /etc/runit/sv/iptables/ /run/runit/service/
 ln -s /etc/runit/sv/fail2ban/ /run/runit/service/
 ln -s /etc/runit/sv/apache/ /run/runit/service/
 
+cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+
+# To test if it works you can use Slowloris
+#pacman -S --nnoconfirm python-pip
+#pip3 install slowloris
+#slowloris example.com
+
 ## List all services
 ###
 # pstree
