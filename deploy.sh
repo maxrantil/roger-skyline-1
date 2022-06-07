@@ -27,6 +27,7 @@ fi
 
 #for virtualBox /dev/sda
 #for virtual manager /dev/vda
+# you need to change in chroot.sh where grub is installed too
 #disk=$(lsblk | awk '/G/ {print $1}')
 
 cat <<EOF | fdisk /dev/sda
@@ -85,4 +86,3 @@ umount -R /mnt
 dialog --title "Done" --msgbox "After this the computer will poweroff, unmount the .iso file, change the network configuration to Bridged Adapter before starting again"  10 60
 
 poweroff
-

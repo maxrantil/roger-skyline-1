@@ -21,27 +21,25 @@ securessh() { \
 		port=$(dialog --no-cancel --inputbox "What ssh port do you want to change to?(recommented range: 49152–65535)" 10 60 3>&1 1>&2 2>&3 3>&1)
 		sed -i 's/#Port 22/Port '$port'/g' /etc/ssh/sshd_config
 		dialog --no-cancel --title "Secure ssh" --msgbox "Be sure you have copied the ssh pub keys from your host into the client before pressing OK\n\n'ssh-copy-id -i ~/.ssh/<pubkey> $name@$ethernet -p $port'" 10 70
-		flag=$(dialog --title "Secure ssh" --yesno "Public key authentication?" 0 0)
-		if [ $flag -lt 1 ]; then
+		if	dialog --stdout --title "Secure ssh" --yesno "SSH public key authentication?" 10 60; then
 			sed -i '/#PubkeyAuthentication yes/s/^#//g' /etc/ssh/sshd_config
 		fi
-		flag=$(dialog --title "Secure ssh" --yesno "Turn off password authentication?" 0 0)
-		if [ $flag -lt 1 ]; then
-			sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication no/g' /etc/ssh/sshd_config
+		if	dialog --title "Secure ssh" --yesno "Turn off password authentication?" 10 60; then
+			sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
 		fi
-		flag=$(dialog --title "Secure ssh" --yesno "Turn off root login?" 0 0)
-		if [ $flag -lt 1 ]; then
+		if	dialog --title "Secure ssh" --yesno "Turn off root login?" 10 60; then
 			sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/g' /etc/ssh/sshd_config
 		fi
-			;}
+		}
 
 getip() { \
 		device=$(nmcli con show | awk '/DEVICE/ {getline ; print $NF}')
+		device_name=$(nmcli con show | awk '/DEVICE/ {getline ; print $1" "$2" "$3}')
 		gateway=$(ip r | awk '/default/ {print $3}')
 		ethernet=$(ip r | awk '/'$gateway'/ {print $9}')
 		broadcast=$(ip a | awk '/'$ethernet'/ {print $4}')
 		eth_mask=$(ip a | awk '/'$ethernet'/ {print $2}')
-		;}
+		}
 
 ## Script Main starts here
 ####
@@ -49,7 +47,7 @@ getip() { \
 ## Install packages and enable them
 ###
 
-pacman -S --noconfirm openssh-runit ufw ufw-runit sudo
+pacman -S --noconfirm openssh-runit ufw ufw-runit
 
 ln -s /etc/runit/sv/sshd /run/runit/service/
 ln -s /etc/runit/sv/ufw /run/runit/service/
@@ -72,18 +70,8 @@ echo $gateway gateway
 echo $ethernet ethernet
 echo $broadcast broadcast
 echo $eth_mask ethernet/netmask
-#dialog --"Set static ip"
-#nmcli con mod "Wired connection 1"
-#  ipv4.addresses "HOST_IP_ADDRESS/IP_NETMASK_BIT_COUNT"
-#  ipv4.gateway "IP_GATEWAY"
-#  ipv4.dns "PRIMARY_IP_DNS,SECONDARY_IP_DNS"
-#  ipv4.dns-search "DOMAIN_NAME"
-#  ipv4.method "manual"
-
-#nmcli con mod "Wired connection 1" ipv4.address "172.20.10.4/30" ipv4.gateway "172.20.10.1" ipv4.dns "8.8.8.8, 8.8.4.4" ipv4.method "manual"
-#dialog --title "Setup Done" --msgbox "After this the computer will reboot."  10 60
-#nmcli con mod "Wired connection 1" ipv4.address "172.20.10.14/30" ipv4.gateway "172.20.10.1" ipv4.method "manual"
-#restart NetworkManager
+nmcli con mod $name ipv4.address "${ethernet}/30" ipv4.gateway $gateway ipv4.dns "8.8.8.8, 8.8.4.4" ipv4.method "manual"
+sv restart NetworkManager
 
 ## Secure ssh
 ###
@@ -121,3 +109,6 @@ pacman -S cronie
 
 
 #reboot
+
+
+
