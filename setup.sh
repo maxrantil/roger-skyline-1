@@ -97,7 +97,7 @@ ufw --force enable
 
 ##Protect against a DDos attack
 ###
-pacman -S --noconfirm iptables iptables-runit fail2ban fail2ban-runit apache apache-runit
+pacman -S --noconfirm iptables iptables-runit ipset fail2ban fail2ban-runit apache apache-runit
 ln -s /etc/runit/sv/iptables/ /run/runit/service/
 ln -s /etc/runit/sv/fail2ban/ /run/runit/service/
 ln -s /etc/runit/sv/apache/ /run/runit/service/
@@ -180,9 +180,37 @@ sv restart fail2ban
 
 ## Port scan
 ###
-pacman -S --noconfirm nmap
+#pacman -S --noconfirm nmap
 ## install nslookup and dig
-pacman -S --noconfirm bind 
+#pacman -S --noconfirm bind
+
+## First flush
+# iptables -F
+## List your settings
+# iptables -L
+## Block ip
+# iptables -I INPUT -s <ip> -j DROP
+## BLock ip with submask
+# iptables -I INPUT -s <ip/netmask> -j DROP
+## Unban ip (first list)
+# iptables -L --line-numbers
+## Then specify the ip in the list
+# iptables -D INPUT <list number>
+## Block all traffic to the web server
+# iptables -I INPUT -p tcp --dport 80 -j DROP
+## Accept only one ip
+# iptables -I INPUT -p tcp --dport 80 <ip> -j ACCEPT
+
+ipset create port_scanners hash:ip family inet hashsize 32768 maxelem 65536 timeout 600
+ipset create scanned_ports hash:ip,port family inet hashsize 32768 maxelem 65536 timeout 60
+iptables -A INPUT -m state --state INVALID -j DROP
+iptables -A INPUT -m state --state NEW -m set ! --match-set scanned_ports src,dst -m hashlimit --hashlimit-above 1/hour --hashlimit-burst 5 --hashlimit-mode srcip --hashlimit-name portscan --hashlimit-htable-expire 10000 -j SET --add-set port_scanners src --exist
+iptables -A INPUT -m state --state NEW -m set --match-set port_scanners src -j DROP
+iptables -A INPUT -m state --state NEW -j SET --add-set scanned_ports src,dst
+
+## Save the rules
+# sudo /sbin/iptables-save
+
 
 ## scan the ports
 ## Commands for scanning
@@ -205,7 +233,8 @@ pacman -S --noconfirm bind
 
 ## Cronie
 ###
-pacman -S --noconfirm cronie
+pacman -S --noconfirm cronie cronie-runit
+ln -s /etc/run/sv/cronie/ /run/runit/service/
 
 
 dialog --title "Done" --msgbox "After this the VM will poweroff."  10 60
