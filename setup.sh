@@ -68,7 +68,7 @@ getip
 #echo $ethernet ethernet
 #echo $broadcast broadcast
 #echo $eth_mask ethernet/netmask
-nmcli con mod $con_name ipv4.addr "${ethernet}/30" ipv4.gateway $gateway ipv4.dns "8.8.8.8, 8.8.4.4" ipv4.method "manual"
+nmcli con mod "$con_name" ipv4.addr "${ethernet}/30" ipv4.gateway $gateway ipv4.dns "8.8.8.8, 8.8.4.4" ipv4.method "manual"
 nmcli con reload
 sv restart NetworkManager
 
@@ -89,7 +89,6 @@ ufw allow 443/tcp
 ## Bonus, hide the server so noone cant ping it
 ###
 sed -i '/^# ok icmp codes for INPUT/a -A ufw-before-input -p icmp --icmp-type echo-request -j DROP' /etc/ufw/before.rules
-
 
 #enable the firewall:
 ufw --force enable
@@ -164,6 +163,9 @@ maxretry = 60
 findtime = 30
 bantime = 6000" >> /etc/fail2ban/jail.local
 
+ufw reload
+sv restart fail2ban
+
 # Command to check why if wont work
 # /usr/bin/fail2ban-client -vv start
 
@@ -206,7 +208,7 @@ pacman -S --noconfirm bind
 pacman -S --noconfirm cronie
 
 
-#reboot
+dialog --title "Done" --msgbox "After this the VM will poweroff."  10 60
 
-
+poweroff
 
