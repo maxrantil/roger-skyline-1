@@ -19,6 +19,7 @@ getuserandpasswd() { \
 securessh() { \
 		port=$(dialog --no-cancel --inputbox "What ssh port do you want to change to?(recommented range: 49152–65535)" 10 60 3>&1 1>&2 2>&3 3>&1)
 		sed -i 's/#Port 22/Port '$port'/g' /etc/ssh/sshd_config
+		sv restart sshd
 		dialog --no-cancel --title "Secure ssh" --msgbox "Be sure you have copied the ssh pub keys from your host into the client before pressing OK\n\n'ssh-copy-id -i ~/.ssh/<pubkey> $name@$ethernet -p $port'" 10 70
 		if	dialog --stdout --title "Secure ssh" --yesno "SSH public key authentication?" 10 60; then
 			sed -i '/#PubkeyAuthentication yes/s/^#//g' /etc/ssh/sshd_config
@@ -46,12 +47,10 @@ getip() { \
 ## Install packages and enable them
 ###
 
-pacman -S --noconfirm openssh-runit ufw ufw-runit
+pacman -Syu --noconfirm openssh-runit ufw ufw-runit
 
 ln -s /etc/runit/sv/sshd /run/runit/service/
 ln -s /etc/runit/sv/ufw /run/runit/service/
-sv restart sshd
-sv restart ufw
 
 ## Create user with sudo rights
 ###
