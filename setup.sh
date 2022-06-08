@@ -4,7 +4,6 @@
 ####
 
 getuserandpasswd() { \
-        # Prompts user for new username an password.
         name=$(dialog --inputbox "First, please enter a name for the user account." 10 60 3>&1 1>&2 2>&3 3>&1) || exit 1
         while ! echo "$name" | grep -q "^[a-z_][a-z0-9_-]*$"; do
                 name=$(dialog --no-cancel --inputbox "Username not valid. Give a username beginning with a letter, with only lowercase letters, - or _." 10 60 3>&1 1>&2 2>&3 3>&1)
@@ -82,11 +81,16 @@ sv restart sshd
 ## Enable Firewall (ufw)
 ###
 #open firewall for ssh port:
-ufw allow ${port}/tcp
+ufw allow ${port}
 
 #for our web server we also need to open for port 80(http) and port 442(TCP/IP):
 ufw allow 80/tcp
-ufw allow 442/tcp
+ufw allow 443/tcp
+
+## Bonus, hide the server so noone cant ping it
+###
+sed -i '/^# ok icmp codes for INPUT/a -A ufw-before-input -p icmp --icmp-type echo-request -j DROP' /etc/ufw/before.rules
+
 
 #enable the firewall:
 ufw --force enable
@@ -161,8 +165,8 @@ maxretry = 60
 findtime = 30
 bantime = 6000" >> /etc/fail2ban/jail.local
 
-# Check why it wont work
-# /usr/bin/fail2ban-client -v -v start
+# Command to check why if wont work
+# /usr/bin/fail2ban-client -vv start
 
 # Unban 
 # fail2ban-client set jail-name unbanip <ip>
@@ -173,12 +177,24 @@ bantime = 6000" >> /etc/fail2ban/jail.local
 #pip3 install slowloris
 #slowloris example.com
 
-## Port sccan
+## Port scan
 ###
-# pacman -S --noconfirm nmap
+pacman -S --noconfirm nmap
+## install nslookup and dig
+pacman -S --noconfirm bind 
 
 ## scan the ports
-# nmap -sV localhost
+## Commands for scanning
+## Triple-handshake scan (full tcp connection)
+# nmap -sT -p 80,443 <ip/submask>
+## Stealthy Syn Scan (half-open)
+# nmap -sS -p 80,443 <ip/submask>
+## Aggressive mode
+# nmap -A <ip>
+## Stealthy Syn Scan with decoil (half-open)
+# nmap -sS -D <decoil ip> <ip>
+## Use scripts (https://nmap.org/nsedoc/categories/)
+# nmap --script vuln <ip>
 
 
 
