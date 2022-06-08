@@ -102,11 +102,64 @@ ln -s /etc/runit/sv/apache/ /run/runit/service/
 
 cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 
-echo "[sshd]" > /etc/fail2ban/jail.d/sshd.local
-echo "enabled = true" >> /etc/fail2ban/jail.d/sshd.local
-echo "logpath = /var/log/httpd/error_log" >> /etc/fail2ban/jail.d/sshd.local
-echo "bantime = 300" >> /etc/fail2ban/jail.d/sshd.local
+echo -e "[sshd]
+mode = aggressive
+enabled = true
+logpath = /var/log/httpd/access_log
+backend = auto
+maxretry = 3
+bantime = 600" > /etc/fail2ban/jail.d/sshd.local
 
+echo -e "# Fail2Ban configuration file
+# You should set up in the jail.conf file, the maxretry and findtime carefully in order to avoid false positives.
+
+[Definition]
+# Option: failregex
+# NOTE: The failregex assumes a particular vhost LogFormat:
+#           LogFormat "%t [%v:%p] [client %h] \"%r\" %>s %b \"%{User-Agent}i\""
+#       This is more in-keeping with the error log parser that contains an explicit [client xxx.xxx.xxx.xxx]
+#       but you could obviously alter this to match your own (or the default LogFormat)
+failregex = \[[^]]+\] \[.*\] \[client <HOST>\] \"GET .*
+
+# Notes.: regex to ignore. If this regex matches, the line is ignored.
+ignoreregex =" > /etc/fail2ban/filter.d/http-get-dos.conf
+
+echo -e "# Fail2Ban configuration file
+# You should set up in the jail.conf file, the maxretry and findtime carefully in order to avoid false positives.
+
+[Definition]
+# Option: failregex
+# NOTE: The failregex assumes a particular vhost LogFormat:
+#           LogFormat "%t [%v:%p] [client %h] \"%r\" %>s %b \"%{User-Agent}i\""
+#       This is more in-keeping with the error log parser that contains an explicit [client xxx.xxx.xxx.xxx]
+#       but you could obviously alter this to match your own (or the default LogFormat)
+failregex = \[[^]]+\] \[.*\] \[client <HOST>\] \"POST .*
+
+# Notes.: regex to ignore. If this regex matches, the line is ignored.
+ignoreregex =" > /etc/fail2ban/filter.d/http-post-dos.conf
+
+echo -e "
+# Simple attempt to block very basic DOS attacks over GET
+# Tolerate ~3.3 GET/s in 30s (100 GET in less then 30s)
+[http-get-dos]
+enabled = true
+port = http,https
+filter = http-get-dos
+logpath = /var/log/httpd/access_log
+maxretry = 100
+findtime = 30
+bantime = 6000
+
+# Simple attempt to block very basic DOS attacks over POST
+# Tolerate ~2 POST/s in 30s (60 POST in less then 30s)
+[http-post-dos]
+enabled = true
+port = http,https
+filter = http-post-dos
+logpath = /var/log/httpd/access_log
+maxretry = 60
+findtime = 30
+bantime = 6000" >> /etc/fail2ban/jail.local
 
 # Check why it wont work
 # /usr/bin/fail2ban-client -v -v start
@@ -119,6 +172,15 @@ echo "bantime = 300" >> /etc/fail2ban/jail.d/sshd.local
 #pacman -S --nnoconfirm python-pip
 #pip3 install slowloris
 #slowloris example.com
+
+## Port sccan
+###
+# pacman -S --noconfirm nmap
+
+## scan the ports
+# nmap -sV localhost
+
+
 
 ## List all services
 ###
