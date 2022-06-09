@@ -47,7 +47,7 @@ getip() { \
 ## Install packages and enable them
 ###
 
-pacman -Syu --noconfirm openssh-runit ufw ufw-runit
+pacman -Sy --noconfirm openssh-runit ufw ufw-runit
 
 ln -s /etc/runit/sv/sshd /run/runit/service/
 ln -s /etc/runit/sv/ufw /run/runit/service/
@@ -103,6 +103,10 @@ ln -s /etc/runit/sv/fail2ban/ /run/runit/service/
 ln -s /etc/runit/sv/apache/ /run/runit/service/
 
 cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+
+sed -i 's/#logpath  = %(sshd_log)s//g' /etc/fail2ban/jail.local
+sed -i 's/#backend  = %(sshd_backend)s//g' /etc/fail2ban/jail.local
+
 
 echo -e "[sshd]
 mode = aggressive
