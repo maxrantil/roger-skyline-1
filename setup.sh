@@ -125,7 +125,7 @@ echo -e "# Fail2Ban configuration file
 #           LogFormat "%t [%v:%p] [client %h] \"%r\" %>s %b \"%{User-Agent}i\""
 #       This is more in-keeping with the error log parser that contains an explicit [client xxx.xxx.xxx.xxx]
 #       but you could obviously alter this to match your own (or the default LogFormat)
-failregex = \[[^]]+\] \[.*\] \[client <HOST>\] \"GET .*
+failregex = failregex = ^<HOST> -.*\"GET.*
 
 # Notes.: regex to ignore. If this regex matches, the line is ignored.
 ignoreregex =" > /etc/fail2ban/filter.d/http-get-dos.conf
@@ -139,7 +139,7 @@ echo -e "# Fail2Ban configuration file
 #           LogFormat "%t [%v:%p] [client %h] \"%r\" %>s %b \"%{User-Agent}i\""
 #       This is more in-keeping with the error log parser that contains an explicit [client xxx.xxx.xxx.xxx]
 #       but you could obviously alter this to match your own (or the default LogFormat)
-failregex = \[[^]]+\] \[.*\] \[client <HOST>\] \"POST .*
+failregex = failregex = ^<HOST> -.*\"POST.*
 
 # Notes.: regex to ignore. If this regex matches, the line is ignored.
 ignoreregex =" > /etc/fail2ban/filter.d/http-post-dos.conf
@@ -167,8 +167,8 @@ maxretry = 60
 findtime = 30
 bantime = 6000" >> /etc/fail2ban/jail.local
 
-ufw reload
-sv restart fail2ban
+#ufw reload
+#sv restart fail2ban
 
 # Command to check why if wont work
 # /usr/bin/fail2ban-client -vv start
@@ -238,10 +238,10 @@ sv restart fail2ban
 ## Cronie
 ###
 pacman -S --noconfirm cronie cronie-runit
-ln -s /etc/run/sv/cronie/ /run/runit/service/
+ln -s /etc/run/sv/cronie /run/runit/service/
 
 
 dialog --title "Done" --msgbox "After this the VM will poweroff."  10 60
 
-#poweroff
+poweroff
 
