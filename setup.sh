@@ -90,12 +90,12 @@ ufw allow 443/tcp
 ###
 sed -i '/^# ok icmp codes for INPUT/a -A ufw-before-input -p icmp --icmp-type echo-request -j DROP' /etc/ufw/before.rules
 
-#enable the firewall:
-ufw --force enable
+#enable the firewall(will come later) :
+# ufw --force enable
 
 
 
-##Protect against a DDos attack
+##Protect against a DoS attack
 ###
 pacman -S --noconfirm iptables iptables-runit ipset fail2ban fail2ban-runit apache apache-runit
 ln -s /etc/runit/sv/iptables/ /run/runit/service/
@@ -103,18 +103,6 @@ ln -s /etc/runit/sv/fail2ban/ /run/runit/service/
 ln -s /etc/runit/sv/apache/ /run/runit/service/
 
 cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
-
-sed -i 's/#logpath  = %(sshd_log)s//g' /etc/fail2ban/jail.local
-sed -i 's/#backend  = %(sshd_backend)s//g' /etc/fail2ban/jail.local
-
-
-echo -e "[sshd]
-mode = aggressive
-enabled = true
-logpath = /var/log/httpd/access_log
-backend = auto
-maxretry = 3
-bantime = 600" > /etc/fail2ban/jail.d/sshd.local
 
 echo -e "# Fail2Ban configuration file
 # You should set up in the jail.conf file, the maxretry and findtime carefully in order to avoid false positives.
@@ -168,7 +156,7 @@ findtime = 30
 bantime = 6000" >> /etc/fail2ban/jail.local
 
 #ufw reload
-#sv restart fail2ban
+sv restart fail2ban
 
 # Command to check why if wont work
 # /usr/bin/fail2ban-client -vv start
@@ -177,10 +165,10 @@ bantime = 6000" >> /etc/fail2ban/jail.local
 # fail2ban-client set jail-name unbanip <ip>
 # fail2ban-client unban --all
 
-# To test if it works you can use Slowloris
-#pacman -S --nnoconfirm python-pip
-#pip3 install slowloris
-#slowloris example.com
+## To test if it works you can use Slowloris
+# pacman -S --noconfirm python-pip
+# pip3 install slowloris
+# slowloris example.com
 
 ## Port scan
 ###
@@ -189,7 +177,7 @@ bantime = 6000" >> /etc/fail2ban/jail.local
 #pacman -S --noconfirm bind
 
 ## First flush
-# iptables -F
+iptables -F
 ## List your settings
 # iptables -L
 ## Block ip
@@ -205,20 +193,24 @@ bantime = 6000" >> /etc/fail2ban/jail.local
 ## Accept only one ip
 # iptables -I INPUT -p tcp --dport 80 <ip> -j ACCEPT
 
-#ipset create port_scanners hash:ip family inet hashsize 32768 maxelem 65536 timeout 600
-#ipset create scanned_ports hash:ip,port family inet hashsize 32768 maxelem 65536 timeout 60
-#iptables -A INPUT -m state --state INVALID -j DROP
-#iptables -A INPUT -m state --state NEW -m set ! --match-set scanned_ports src,dst -m hashlimit --hashlimit-above 1/hour --hashlimit-burst 5 --hashlimit-mode srcip --hashlimit-name portscan --hashlimit-htable-expire 10000 -j SET --add-set port_scanners src --exist
-#iptables -A INPUT -m state --state NEW -m set --match-set port_scanners src -j DROP
-#iptables -A INPUT -m state --state NEW -j SET --add-set scanned_ports src,dst
+ipset create port_scanners hash:ip family inet hashsize 32768 maxelem 65536 timeout 600
+ipset create scanned_ports hash:ip,port family inet hashsize 32768 maxelem 65536 timeout 60
+iptables -A INPUT -m state --state INVALID -j DROP
+iptables -A INPUT -m state --state NEW -m set ! --match-set scanned_ports src,dst -m hashlimit --hashlimit-above 1/hour --hashlimit-burst 5 --hashlimit-mode srcip --hashlimit-name portscan --hashlimit-htable-expire 10000 -j SET --add-set port_scanners src --exist
+iptables -A INPUT -m state --state NEW -m set --match-set port_scanners src -j DROP
+iptables -A INPUT -m state --state NEW -j SET --add-set scanned_ports src,dst
 
 ## Save the rules
-# sudo /sbin/iptables-save
+/sbin/iptables-save
+
+
+#enable the firewall :
+ufw --force enable
 
 
 ## scan the ports
 ## Commands for scanning
-## Triple-handshake scan (full tcp connection)
+## tls Triple-handshake scan (full tcp connection)
 # nmap -sT -p 80,443 <ip/submask>
 ## Stealthy Syn Scan (half-open)
 # nmap -sS -p 80,443 <ip/submask>
@@ -230,7 +222,29 @@ bantime = 6000" >> /etc/fail2ban/jail.local
 # nmap --script vuln <ip>
 
 
-
+## SSL Cert
+###
+cd && mkdir -p selfsigned-certs && cd selfsigned-certs
+### Generate CA
+## Generate RSA
+openssl genrsa -aes256 -out ca-key.pem 4096
+## Generate a public CA Cert
+openssl req -new -x509 -sha256 -days 3650 -key ca-key.pem -out ca.pem
+### Generate Certificate
+## Create a RSA key
+openssl genrsa -out cert-key.pem 4096
+## Create a Certificate Signing Request (CSR)
+openssl req -new -sha256 -subj "/CN=${name}" -key cert-key.pem -out cert.csr
+## Create a extfile with all the alternative names
+echo "subjectAltName=DNS:*.${name}.home,IP:${ip}" >> extfile.cnf
+## Create the certificate
+openssl x509 -req -sha256 -days 3650 -in cert.csr -CA ca.pem -CAkey ca-key.pem -out cert.pem -extfile extfile.cnf -CAcreateserial
+## Combined the files
+cat cert.pem > fullchain.pem
+cat ca.pem >> ./fullchain.pem
+## Install the CA Cert as a trusted root CA
+trust anchor --store ca.pem
+update-ca-trust
 ## List all services
 ###
 # pstree
@@ -241,7 +255,7 @@ pacman -S --noconfirm cronie cronie-runit
 ln -s /etc/run/sv/cronie /run/runit/service/
 
 
-dialog --title "Done" --msgbox "After this the VM will poweroff."  10 60
+#dialog --title "Done" --msgbox "After this the VM will poweroff."  10 60
 
-poweroff
+#poweroff
 
