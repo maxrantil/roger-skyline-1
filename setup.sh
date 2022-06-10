@@ -245,15 +245,54 @@ cat ca.pem >> ./fullchain.pem
 ## Install the CA Cert as a trusted root CA
 trust anchor --store ca.pem
 update-ca-trust
+
+
+
 ## List all services
 ###
 # pstree
 
+
+## Create a script that updates all sources of packages
+###
+cd 
+cat > update_packages.sh <<'EOF'
+#!/bin/bash
+
+## Update all packages and sources
+updates_log=/var/log/update_script.log
+
+printf "\nPackages Update %s\n" "$(date)" >> $updates_log
+pacman -Syu --noconfirm | tee -a "$updates_log"
+
+## Clear cache
+pacman -Sc --noconfirm
+EOF
+chmod 755 update_packages.sh
+
+
 ## Cronie
 ###
-pacman -S --noconfirm cronie cronie-runit
+pacman -S --noconfirm cronie cronie-runit rsync rsync-runit
 ln -s /etc/run/sv/cronie /run/runit/service/
+ln -s /etc/run/sv/rsync /run/runit/service/
 
+export VISUAL=vim
+export EDITOR=vim
+
+echo "export EDITOR='/usr/bin/vim'" >> ~/.bashrc
+echo "export VISUAL='/usr/bin/vim'" >> ~/.bashrc
+source ~/.bashrc
+
+#write out current crontab
+crontab -l > mycron
+#echo new cron into cron file
+echo "# Update source to packages
+0 4 * * 0	~/update_packages.sh
+@reboot		~/update_packages.sh" >> mycron
+#install new cron file
+crontab mycron
+rm mycron
 
 #dialog --title "Done" --msgbox "After this the VM will poweroff."  10 60
 
