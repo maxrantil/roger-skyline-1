@@ -60,6 +60,7 @@ echo -e "$pass1\n$pass1" | passwd $name
 usermod -aG wheel $name
 sed -i '/# %wheel ALL=(ALL:ALL) ALL/s/^# //g' /etc/sudoers
 
+#echo "$pass1" | su $name
 ## Static IP
 ###
 getip
@@ -243,32 +244,70 @@ ufw --force enable
 #trust anchor --store ca.pem
 #update-ca-trust
 
+## New try
 
+echo "[req]
+default_bit = 4096
+distinguished_name = req_distinguished_name
+prompt = no
+
+[req_distinguished_name]
+countryName             = FI
+stateOrProvinceName     = Nyland
+localityName            = Helsinki
+organizationName        = ${ip}" >> /certs/cert_ext.cnf
+
+echo "[req]
+distinguished_name = req_distinguished_name
+x509_extensions = v3_ca
+prompt = no
+
+[req_distinguished_name]
+countryName             = FI
+stateOrProvinceName     = Nyland
+localityName            = Helsinki
+organizationName        = ${ip}
+commonName              = rootca.com
+
+[ v3_ca ]
+basicConstraints=critical,CA:TRUE
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid:always,issuer" >> /certs/cert_ext.cnf
+
+echo "default_bit = 4096
+distinguished_name = req_distinguished_name
+prompt = no
+
+[req_distinguished_name]
+countryName             = IN
+stateOrProvinceName     = Karnataka
+localityName            = Bengaluru
+organizationName        = ${ip}
+commonName              = example.com" >> /certs/server_sert.cnf
+
+echo "authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth, clientAuth" >> /certs/server_ext.cnf
+
+curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/gen_certificate.sh > gen_certificate.sh
+bash gen_certificate.sh
+
+#cd /etc/httpd/conf
+#openssl genrsa -des3 -out server.key 1024
+#openssl req -new -key server.key -out server.csr
+#cp server.key server.key.org
+#openssl rsa -in server.key.org -out server.key
+#openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+sed -i '/#Include conf/extra/httpd-ssl.conf/s/^#//g' /etc/httpd/conf/httpd.conf
+sv restart apache
 
 ## List all services
 ###
 # pstree
 
 
-## Create a script that updates all sources of packages
-###
-cd 
-cat > update_packages.sh <<'EOF'
-#!/bin/bash
-
-## Update all packages and sources
-updates_log=/var/log/update_script.log
-
-printf "\nPackages Update %s\n" "$(date)" >> $updates_log
-pacman -Syu --noconfirm | tee -a "$updates_log"
-
-## Clear cache
-pacman -Sc --noconfirm
-EOF
-chmod 755 update_packages.sh
-
-
-## Cronie
+## Crontab, Cronie and Rsync 
 ###
 pacman -S --noconfirm cronie cronie-runit rsync rsync-runit
 ln -s /etc/run/sv/cronie /run/runit/service/
@@ -281,8 +320,28 @@ echo "export EDITOR='/usr/bin/vim'" >> ~/.bashrc
 echo "export VISUAL='/usr/bin/vim'" >> ~/.bashrc
 source ~/.bashrc
 
+# change user
+echo "$pass1" | su $name
+
+##change user to $name and try it out there if it works on reboot
+## Create a script that updates all sources of packages
+###
+cd 
+cat > update_packages.sh <<'EOF'
+#!/bin/bash
+
+## Update all packages and sources
+updates_log=/var/log/update_script.log
+
+printf "\nPackages Update %s\n" "$(date)" >> $updates_log
+pacman -Syu --noconfirm | sudo tee -a "$updates_log"
+
+## Clear cache
+pacman -Sc --noconfirm
+EOF
+chmod 755 update_packages.sh
+
 #write out current crontab
-crontab -l > mycron
 #echo new cron into cron file
 echo "# Update source to packages
 0 4 * * 0	~/update_packages.sh
