@@ -258,39 +258,39 @@ stateOrProvinceName     = Nyland
 localityName            = Helsinki
 organizationName        = ${name}" >> /certs/cert_ext.cnf
 
-echo -e "[req]
-distinguished_name = req_distinguished_name
-x509_extensions = v3_ca
-prompt = no
+#echo -e "[req]
+#distinguished_name = req_distinguished_name
+#x509_extensions = v3_ca
+#prompt = no
 
-[req_distinguished_name]
-countryName             = FI
-stateOrProvinceName     = Nyland
-localityName            = Helsinki
-organizationName        = ${name}
-commonName              = ${ethernet}
+#[req_distinguished_name]
+#countryName             = FI
+#stateOrProvinceName     = Nyland
+#localityName            = Helsinki
+#organizationName        = ${name}
+#commonName              = ${ethernet}
 
-[ v3_ca ]
-basicConstraints=critical,CA:TRUE
-subjectKeyIdentifier=hash
-authorityKeyIdentifier=keyid:always,issuer" >> /certs/ca_cert.cnf
+#[ v3_ca ]
+#basicConstraints=critical,CA:TRUE
+#subjectKeyIdentifier=hash
+#authorityKeyIdentifier=keyid:always,issuer" >> /certs/ca_cert.cnf
 
-echo -e "[req]
-default_bit = 4096
-distinguished_name = req_distinguished_name
-prompt = no
+#echo -e "[req]
+#default_bit = 4096
+#distinguished_name = req_distinguished_name
+#prompt = no
 
-[req_distinguished_name]
-countryName             = FI
-stateOrProvinceName     = Nyland
-localityName            = Helsinki
-organizationName        = ${name}
-commonName              = ${ethernet}" >> /certs/server_cert.cnf
+#[req_distinguished_name]
+#countryName             = FI
+#stateOrProvinceName     = Nyland
+#localityName            = Helsinki
+#organizationName        = ${name}
+#commonName              = ${ethernet}" >> /certs/server_cert.cnf
 
-echo -e "authorityKeyIdentifier=keyid,issuer
-basicConstraints=CA:FALSE
-keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
-extendedKeyUsage = serverAuth, clientAuth" >> /certs/server_ext.cnf
+#echo -e "authorityKeyIdentifier=keyid,issuer
+#basicConstraints=CA:FALSE
+#keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+#extendedKeyUsage = serverAuth, clientAuth" >> /certs/server_ext.cnf
 
 curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/gen_certificates.sh > gen_certificates.sh
 chmod 755 gen_certificates.sh
