@@ -292,6 +292,7 @@ keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
 extendedKeyUsage = serverAuth, clientAuth" >> /certs/server_ext.cnf
 
 curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/gen_certificates.sh > gen_certificates.sh
+chmod 755 gen_certificates.sh
 bash gen_certificates.sh
 
 #cd /etc/httpd/conf
