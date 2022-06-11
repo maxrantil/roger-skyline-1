@@ -290,8 +290,8 @@ basicConstraints=CA:FALSE
 keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
 extendedKeyUsage = serverAuth, clientAuth" >> /certs/server_ext.cnf
 
-curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/gen_certificate.sh > gen_certificate.sh
-bash gen_certificate.sh
+#curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/gen_certificate.sh > gen_certificate.sh
+#bash gen_certificate.sh
 
 #cd /etc/httpd/conf
 #openssl genrsa -des3 -out server.key 1024
@@ -299,8 +299,8 @@ bash gen_certificate.sh
 #cp server.key server.key.org
 #openssl rsa -in server.key.org -out server.key
 #openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
-sed -i '/#Include conf/extra/httpd-ssl.conf/s/^#//g' /etc/httpd/conf/httpd.conf
-sv restart apache
+#sed -i '/#Include conf/extra/httpd-ssl.conf/s/^#//g' /etc/httpd/conf/httpd.conf
+#sv restart apache
 
 ## List all services
 ###
@@ -320,14 +320,11 @@ echo "export EDITOR='/usr/bin/vim'" >> ~/.bashrc
 echo "export VISUAL='/usr/bin/vim'" >> ~/.bashrc
 source ~/.bashrc
 
-# change user
-echo "$pass1" | su $name
-
 ##change user to $name and try it out there if it works on reboot
 ## Create a script that updates all sources of packages
 ###
-cd 
-cat > update_packages.sh <<'EOF'
+sudo -u $name cd 
+sudo -u $name cat > update_packages.sh <<'EOF'
 #!/bin/bash
 
 ## Update all packages and sources
@@ -339,16 +336,16 @@ pacman -Syu --noconfirm | sudo tee -a "$updates_log"
 ## Clear cache
 pacman -Sc --noconfirm
 EOF
-chmod 755 update_packages.sh
+sudo -u $name chmod 755 update_packages.sh
 
 #write out current crontab
 #echo new cron into cron file
-echo "# Update source to packages
+sudo -u $name echo "# Update source to packages
 0 4 * * 0	~/update_packages.sh
 @reboot		~/update_packages.sh" >> mycron
 #install new cron file
-crontab mycron
-rm mycron
+sudo -u $name crontab mycron
+sudo -u $name rm mycron
 
 #dialog --title "Done" --msgbox "After this the VM will poweroff."  10 60
 
