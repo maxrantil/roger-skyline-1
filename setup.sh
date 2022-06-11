@@ -275,7 +275,8 @@ basicConstraints=critical,CA:TRUE
 subjectKeyIdentifier=hash
 authorityKeyIdentifier=keyid:always,issuer" >> /certs/ca_cert.cnf
 
-echo -e "default_bit = 4096
+echo -e "[req]
+default_bit = 4096
 distinguished_name = req_distinguished_name
 prompt = no
 
