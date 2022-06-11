@@ -256,7 +256,7 @@ prompt = no
 countryName             = FI
 stateOrProvinceName     = Nyland
 localityName            = Helsinki
-organizationName        = ${ip}" >> /certs/cert_ext.cnf
+organizationName        = ${ethernet}" >> /certs/cert_ext.cnf
 
 echo -e "[req]
 distinguished_name = req_distinguished_name
@@ -267,7 +267,7 @@ prompt = no
 countryName             = FI
 stateOrProvinceName     = Nyland
 localityName            = Helsinki
-organizationName        = ${ip}
+organizationName        = ${ethernet}
 commonName              = rootca.com
 
 [ v3_ca ]
@@ -283,7 +283,7 @@ prompt = no
 countryName             = IN
 stateOrProvinceName     = Karnataka
 localityName            = Bengaluru
-organizationName        = ${ip}
+organizationName        = ${ethernet}
 commonName              = example.com" >> /certs/server_cert.cnf
 
 echo -e "authorityKeyIdentifier=keyid,issuer
@@ -347,7 +347,7 @@ echo "# Update source to packages
 @reboot		~/update_packages.sh" >> mycron
 #install new cron file
 crontab mycron
-$name rm mycron
+rm mycron
 
 #dialog --title "Done" --msgbox "After this the VM will poweroff."  10 60
 
