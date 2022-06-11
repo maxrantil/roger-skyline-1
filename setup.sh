@@ -63,14 +63,11 @@ sed -i '/# %wheel ALL=(ALL:ALL) ALL/s/^# //g' /etc/sudoers
 ## Static IP
 ###
 getip
-#echo $device device
-#echo $gateway gateway
-#echo $ethernet ethernet
-#echo $broadcast broadcast
-#echo $eth_mask ethernet/netmask
-nmcli con mod "$con_name" ipv4.addr "${ethernet}/30" ipv4.gateway $gateway ipv4.dns "8.8.8.8, 8.8.4.4" ipv4.method "manual"
-nmcli con reload
-sv restart NetworkManager
+## Dosnt work on wifi 
+## Uncomment for ethernet static ip
+#nmcli con mod "$con_name" ipv4.addr "${ethernet}/30" ipv4.gateway $gateway ipv4.dns "8.8.8.8, 8.8.4.4" ipv4.method "manual"
+#nmcli con reload
+#sv restart NetworkManager
 
 ## Secure ssh
 ###
@@ -224,27 +221,27 @@ ufw --force enable
 
 ## SSL Cert
 ###
-cd && mkdir -p selfsigned-certs && cd selfsigned-certs
+#cd && mkdir -p selfsigned-certs && cd selfsigned-certs
 ### Generate CA
 ## Generate RSA
-openssl genrsa -aes256 -out ca-key.pem 4096
+#openssl genrsa -aes256 -out ca-key.pem 4096
 ## Generate a public CA Cert
-openssl req -new -x509 -sha256 -days 3650 -key ca-key.pem -out ca.pem
+#openssl req -new -x509 -sha256 -days 3650 -key ca-key.pem -out ca.pem
 ### Generate Certificate
 ## Create a RSA key
-openssl genrsa -out cert-key.pem 4096
+#openssl genrsa -out cert-key.pem 4096
 ## Create a Certificate Signing Request (CSR)
-openssl req -new -sha256 -subj "/CN=${name}" -key cert-key.pem -out cert.csr
+#openssl req -new -sha256 -subj "/CN=${name}" -key cert-key.pem -out cert.csr
 ## Create a extfile with all the alternative names
-echo "subjectAltName=DNS:*.${name}.home,IP:${ip}" >> extfile.cnf
+#echo "subjectAltName=DNS:*.${name}.home,IP:${ip}" >> extfile.cnf
 ## Create the certificate
-openssl x509 -req -sha256 -days 3650 -in cert.csr -CA ca.pem -CAkey ca-key.pem -out cert.pem -extfile extfile.cnf -CAcreateserial
+#openssl x509 -req -sha256 -days 3650 -in cert.csr -CA ca.pem -CAkey ca-key.pem -out cert.pem -extfile extfile.cnf -CAcreateserial
 ## Combined the files
-cat cert.pem > fullchain.pem
-cat ca.pem >> ./fullchain.pem
+#cat cert.pem > fullchain.pem
+#cat ca.pem >> ./fullchain.pem
 ## Install the CA Cert as a trusted root CA
-trust anchor --store ca.pem
-update-ca-trust
+#trust anchor --store ca.pem
+#update-ca-trust
 
 
 
