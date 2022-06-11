@@ -291,8 +291,8 @@ basicConstraints=CA:FALSE
 keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
 extendedKeyUsage = serverAuth, clientAuth" >> /certs/server_ext.cnf
 
-curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/gen_certificates.sh > gen_certificateis.sh
-bash gen_certificate.sh
+curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/gen_certificates.sh > gen_certificates.sh
+bash gen_certificates.sh
 
 #cd /etc/httpd/conf
 #openssl genrsa -des3 -out server.key 1024
@@ -324,8 +324,8 @@ source ~/.bashrc
 ##change user to $name and try it out there if it works on reboot
 ## Create a script that updates all sources of packages
 ###
-sudo -u $name cd 
-sudo -u $name cat > update_packages.sh <<'EOF'
+cd 
+cat > update_packages.sh <<'EOF'
 #!/bin/bash
 
 ## Update all packages and sources
@@ -337,16 +337,16 @@ pacman -Syu --noconfirm | sudo tee -a "$updates_log"
 ## Clear cache
 pacman -Sc --noconfirm
 EOF
-sudo -u $name chmod 755 update_packages.sh
+chmod 755 update_packages.sh
 
 #write out current crontab
 #echo new cron into cron file
-sudo -u $name echo "# Update source to packages
+echo "# Update source to packages
 0 4 * * 0	~/update_packages.sh
 @reboot		~/update_packages.sh" >> mycron
 #install new cron file
-sudo -u $name crontab mycron
-sudo -u $name rm mycron
+crontab mycron
+$name rm mycron
 
 #dialog --title "Done" --msgbox "After this the VM will poweroff."  10 60
 
