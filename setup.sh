@@ -256,7 +256,7 @@ prompt = no
 countryName             = FI
 stateOrProvinceName     = Nyland
 localityName            = Helsinki
-organizationName        = ${ethernet}" >> /certs/cert_ext.cnf
+organizationName        = ${name}" >> /certs/cert_ext.cnf
 
 echo -e "[req]
 distinguished_name = req_distinguished_name
@@ -267,8 +267,8 @@ prompt = no
 countryName             = FI
 stateOrProvinceName     = Nyland
 localityName            = Helsinki
-organizationName        = ${ethernet}
-commonName              = rootca.com
+organizationName        = ${name}
+commonName              = ${ethernet}
 
 [ v3_ca ]
 basicConstraints=critical,CA:TRUE
@@ -283,8 +283,8 @@ prompt = no
 countryName             = FI
 stateOrProvinceName     = Nyland
 localityName            = Helsinki
-organizationName        = ${ethernet}
-commonName              = example.com" >> /certs/server_cert.cnf
+organizationName        = ${name}
+commonName              = ${ethernet}" >> /certs/server_cert.cnf
 
 echo -e "authorityKeyIdentifier=keyid,issuer
 basicConstraints=CA:FALSE
