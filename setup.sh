@@ -246,6 +246,7 @@ ufw --force enable
 
 ## New try
 
+mkdir -p /certs
 echo -e "[req]
 default_bit = 4096
 distinguished_name = req_distinguished_name
@@ -272,7 +273,7 @@ commonName              = rootca.com
 [ v3_ca ]
 basicConstraints=critical,CA:TRUE
 subjectKeyIdentifier=hash
-authorityKeyIdentifier=keyid:always,issuer" >> /certs/cert_ext.cnf
+authorityKeyIdentifier=keyid:always,issuer" >> /certs/ca_cert.cnf
 
 echo -e "default_bit = 4096
 distinguished_name = req_distinguished_name
@@ -283,15 +284,15 @@ countryName             = IN
 stateOrProvinceName     = Karnataka
 localityName            = Bengaluru
 organizationName        = ${ip}
-commonName              = example.com" >> /certs/server_sert.cnf
+commonName              = example.com" >> /certs/server_cert.cnf
 
 echo -e "authorityKeyIdentifier=keyid,issuer
 basicConstraints=CA:FALSE
 keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
 extendedKeyUsage = serverAuth, clientAuth" >> /certs/server_ext.cnf
 
-#curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/gen_certificate.sh > gen_certificate.sh
-#bash gen_certificate.sh
+curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/gen_certificates.sh > gen_certificateis.sh
+bash gen_certificate.sh
 
 #cd /etc/httpd/conf
 #openssl genrsa -des3 -out server.key 1024
@@ -299,7 +300,7 @@ extendedKeyUsage = serverAuth, clientAuth" >> /certs/server_ext.cnf
 #cp server.key server.key.org
 #openssl rsa -in server.key.org -out server.key
 #openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
-#sed -i '/#Include conf/extra/httpd-ssl.conf/s/^#//g' /etc/httpd/conf/httpd.conf
+sed -i '/#Include conf/extra/httpd-ssl.conf/s/^#//g' /etc/httpd/conf/httpd.conf
 #sv restart apache
 
 ## List all services
