@@ -280,9 +280,9 @@ distinguished_name = req_distinguished_name
 prompt = no
 
 [req_distinguished_name]
-countryName             = IN
-stateOrProvinceName     = Karnataka
-localityName            = Bengaluru
+countryName             = FI
+stateOrProvinceName     = Nyland
+localityName            = Helsinki
 organizationName        = ${ethernet}
 commonName              = example.com" >> /certs/server_cert.cnf
 
