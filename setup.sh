@@ -246,7 +246,7 @@ ufw --force enable
 
 ## New try
 
-echo "[req]
+echo -e "[req]
 default_bit = 4096
 distinguished_name = req_distinguished_name
 prompt = no
@@ -257,7 +257,7 @@ stateOrProvinceName     = Nyland
 localityName            = Helsinki
 organizationName        = ${ip}" >> /certs/cert_ext.cnf
 
-echo "[req]
+echo -e "[req]
 distinguished_name = req_distinguished_name
 x509_extensions = v3_ca
 prompt = no
@@ -274,7 +274,7 @@ basicConstraints=critical,CA:TRUE
 subjectKeyIdentifier=hash
 authorityKeyIdentifier=keyid:always,issuer" >> /certs/cert_ext.cnf
 
-echo "default_bit = 4096
+echo -e "default_bit = 4096
 distinguished_name = req_distinguished_name
 prompt = no
 
@@ -285,7 +285,7 @@ localityName            = Bengaluru
 organizationName        = ${ip}
 commonName              = example.com" >> /certs/server_sert.cnf
 
-echo "authorityKeyIdentifier=keyid,issuer
+echo -e "authorityKeyIdentifier=keyid,issuer
 basicConstraints=CA:FALSE
 keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
 extendedKeyUsage = serverAuth, clientAuth" >> /certs/server_ext.cnf
