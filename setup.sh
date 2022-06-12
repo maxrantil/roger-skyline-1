@@ -264,16 +264,16 @@ sv restart apache
 
 ## Crontab, Cronie and Rsync 
 ###
-pacman -S --noconfirm cronie cronie-runit rsync rsync-runit
-ln -s /etc/run/sv/cronie /run/runit/service/
-ln -s /etc/run/sv/rsync /run/runit/service/
+#pacman -S --noconfirm cronie cronie-runit rsync rsync-runit
+#ln -s /etc/run/sv/cronie /run/runit/service/
+#ln -s /etc/run/sv/rsync /run/runit/service/
 
-export VISUAL=vim
-export EDITOR=vim
+#export VISUAL=vim
+#export EDITOR=vim
 
-echo "export EDITOR='/usr/bin/vim'" >> ~/.bashrc
-echo "export VISUAL='/usr/bin/vim'" >> ~/.bashrc
-source ~/.bashrc
+#echo "export EDITOR='/usr/bin/vim'" >> ~/.bashrc
+#echo "export VISUAL='/usr/bin/vim'" >> ~/.bashrc
+#source ~/.bashrc
 
 ##change user to $name and try it out there if it works on reboot
 ## Create a script that updates all sources of packages
