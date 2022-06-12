@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PATH="/etc/ssl/certs"
+PATH="/etc/httpd/conf"
 SERVER_KEY="$PATH/server.key"
 SERVER_CSR="$PATH/server.csr"
 SERVER_CRT="$PATH/server.crt"
