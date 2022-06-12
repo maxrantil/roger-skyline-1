@@ -163,7 +163,7 @@ sv restart fail2ban
 #pacman -S --noconfirm bind
 
 ## First flush
-# iptables -F
+iptables -F
 ## List your settings
 # iptables -L
 ## Block ip
@@ -250,7 +250,6 @@ bash gen_certificates.sh
 #openssl rsa -in server.key.org -out server.key
 #openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
 sed -i '/#Include conf\/extra\/httpd-ssl.conf/s/^#//g' /etc/httpd/conf/httpd.conf
-sv restart apache
 
 ## List all services
 ###
@@ -303,3 +302,4 @@ rm mycron
 
 #enable the firewall :
 ufw --force enable
+sv restart apache
