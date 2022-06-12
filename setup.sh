@@ -95,7 +95,7 @@ sed -i '/^# ok icmp codes for INPUT/a -A ufw-before-input -p icmp --icmp-type ec
 
 ##Protect against a DoS attack
 ###
-pacman -S --noconfirm iptables iptables-runit ipset fail2ban fail2ban-runit apache apache-runit
+pacman -S --noconfirm iptables-runit ipset fail2ban fail2ban-runit apache apache-runit
 ln -s /etc/runit/sv/iptables/ /run/runit/service/
 ln -s /etc/runit/sv/fail2ban/ /run/runit/service/
 ln -s /etc/runit/sv/apache/ /run/runit/service/
@@ -163,7 +163,7 @@ sv restart fail2ban
 #pacman -S --noconfirm bind
 
 ## First flush
-iptables -F
+# iptables -F
 ## List your settings
 # iptables -L
 ## Block ip
@@ -232,9 +232,7 @@ ufw --force enable
 #trust anchor --store ca.pem
 #update-ca-trust
 
-## New try
 
-mkdir -p /certs
 echo -e "[req]
 default_bit = 4096
 distinguished_name = req_distinguished_name
@@ -244,41 +242,7 @@ prompt = no
 countryName             = FI
 stateOrProvinceName     = Nyland
 localityName            = Helsinki
-organizationName        = ${name}" >> /certs/cert_ext.cnf
-
-#echo -e "[req]
-#distinguished_name = req_distinguished_name
-#x509_extensions = v3_ca
-#prompt = no
-
-#[req_distinguished_name]
-#countryName             = FI
-#stateOrProvinceName     = Nyland
-#localityName            = Helsinki
-#organizationName        = ${name}
-#commonName              = ${ethernet}
-
-#[ v3_ca ]
-#basicConstraints=critical,CA:TRUE
-#subjectKeyIdentifier=hash
-#authorityKeyIdentifier=keyid:always,issuer" >> /certs/ca_cert.cnf
-
-#echo -e "[req]
-#default_bit = 4096
-#distinguished_name = req_distinguished_name
-#prompt = no
-
-#[req_distinguished_name]
-#countryName             = FI
-#stateOrProvinceName     = Nyland
-#localityName            = Helsinki
-#organizationName        = ${name}
-#commonName              = ${ethernet}" >> /certs/server_cert.cnf
-
-#echo -e "authorityKeyIdentifier=keyid,issuer
-#basicConstraints=CA:FALSE
-#keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
-#extendedKeyUsage = serverAuth, clientAuth" >> /certs/server_ext.cnf
+organizationName        = ${name}" >> /etc/ssl/certs/cert_ext.cnf
 
 curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/gen_certificates.sh > gen_certificates.sh
 chmod 755 gen_certificates.sh
@@ -291,7 +255,7 @@ bash gen_certificates.sh
 #openssl rsa -in server.key.org -out server.key
 #openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
 sed -i '/#Include conf/extra/httpd-ssl.conf/s/^#//g' /etc/httpd/conf/httpd.conf
-#sv restart apache
+sv restart apache
 
 ## List all services
 ###
