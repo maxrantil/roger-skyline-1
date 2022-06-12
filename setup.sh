@@ -189,11 +189,6 @@ iptables -A INPUT -m state --state NEW -j SET --add-set scanned_ports src,dst
 ## Save the rules
 /sbin/iptables-save
 
-
-#enable the firewall :
-ufw --force enable
-
-
 ## scan the ports
 ## Commands for scanning
 ## tls Triple-handshake scan (full tcp connection)
@@ -242,7 +237,7 @@ prompt = no
 countryName             = FI
 stateOrProvinceName     = Nyland
 localityName            = Helsinki
-organizationName        = ${name}" >> /etc/ssl/certs/cert_ext.cnf
+organizationName        = ${name}" >> /etc/httpd/conf/cert_ext.cnf
 
 curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/gen_certificates.sh > gen_certificates.sh
 chmod 755 gen_certificates.sh
@@ -306,3 +301,5 @@ rm mycron
 
 #poweroff
 
+#enable the firewall :
+ufw --force enable
