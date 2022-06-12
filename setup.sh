@@ -254,7 +254,9 @@ bash gen_certificates.sh
 #cp server.key server.key.org
 #openssl rsa -in server.key.org -out server.key
 #openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+echo "before"
 sed -i '/#Include conf/extra/httpd-ssl.conf/s/^#//g' /etc/httpd/conf/httpd.conf
+echo "after"
 sv restart apache
 
 ## List all services
