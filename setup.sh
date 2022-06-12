@@ -103,28 +103,16 @@ ln -s /etc/runit/sv/apache/ /run/runit/service/
 cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 
 echo -e "# Fail2Ban configuration file
-# You should set up in the jail.conf file, the maxretry and findtime carefully in order to avoid false positives.
 
 [Definition]
-# Option: failregex
-# NOTE: The failregex assumes a particular vhost LogFormat:
-#           LogFormat "%t [%v:%p] [client %h] \"%r\" %s %b \"%{User-Agent}i\""
-#       This is more in-keeping with the error log parser that contains an explicit [client xxx.xxx.xxx.xxx]
-#       but you could obviously alter this to match your own (or the default LogFormat)
 failregex = failregex = ^<HOST> -.*\"GET.*
 
 # Notes.: regex to ignore. If this regex matches, the line is ignored.
 ignoreregex =" > /etc/fail2ban/filter.d/http-get-dos.conf
 
 echo -e "# Fail2Ban configuration file
-# You should set up in the jail.conf file, the maxretry and findtime carefully in order to avoid false positives.
 
 [Definition]
-# Option: failregex
-# NOTE: The failregex assumes a particular vhost LogFormat:
-#           LogFormat "%t [%v:%p] [client %h] \"%r\" %s %b \"%{User-Agent}i\""
-#       This is more in-keeping with the error log parser that contains an explicit [client xxx.xxx.xxx.xxx]
-#       but you could obviously alter this to match your own (or the default LogFormat)
 failregex = failregex = ^<HOST> -.*\"POST.*
 
 # Notes.: regex to ignore. If this regex matches, the line is ignored.
