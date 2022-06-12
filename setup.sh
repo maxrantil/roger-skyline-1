@@ -95,7 +95,7 @@ sed -i '/^# ok icmp codes for INPUT/a -A ufw-before-input -p icmp --icmp-type ec
 
 ##Protect against a DoS attack
 ###
-pacman -S --noconfirm iptables-runit ipset fail2ban fail2ban-runit apache apache-runit
+pacman -S --noconfirm iptables iptables-runit ipset fail2ban fail2ban-runit apache apache-runit
 ln -s /etc/runit/sv/iptables/ /run/runit/service/
 ln -s /etc/runit/sv/fail2ban/ /run/runit/service/
 ln -s /etc/runit/sv/apache/ /run/runit/service/
