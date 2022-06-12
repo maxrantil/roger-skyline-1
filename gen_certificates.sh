@@ -1,13 +1,12 @@
 #!/bin/bash
 
-PATH="/certs"
+PATH="/etc/ssl/certs"
 SERVER_KEY="$PATH/server.key"
 SERVER_CSR="$PATH/server.csr"
 SERVER_CRT="$PATH/server.crt"
 EXTFILE="$PATH/cert_ext.cnf"
 OPENSSL_CMD="/usr/bin/openssl"
 COMMON_NAME="$1"
-ethernet=$(ip r | awk '/'$gateway'/ {print $9}')
 
 function show_usage {
     printf "Usage: $0 [options [parameters]]\n"
@@ -30,7 +29,7 @@ case $1 in
          ;;
      *)
         ## Use hostname as Common Name
-        COMMON_NAME="$ethernet"
+        COMMON_NAME="/etc/hostname"
         ;;
 esac
 

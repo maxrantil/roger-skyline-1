@@ -108,7 +108,7 @@ echo -e "# Fail2Ban configuration file
 [Definition]
 # Option: failregex
 # NOTE: The failregex assumes a particular vhost LogFormat:
-#           LogFormat "%t [%v:%p] [client %h] \"%r\" %>s %b \"%{User-Agent}i\""
+#           LogFormat "%t [%v:%p] [client %h] \"%r\" %s %b \"%{User-Agent}i\""
 #       This is more in-keeping with the error log parser that contains an explicit [client xxx.xxx.xxx.xxx]
 #       but you could obviously alter this to match your own (or the default LogFormat)
 failregex = failregex = ^<HOST> -.*\"GET.*
@@ -122,7 +122,7 @@ echo -e "# Fail2Ban configuration file
 [Definition]
 # Option: failregex
 # NOTE: The failregex assumes a particular vhost LogFormat:
-#           LogFormat "%t [%v:%p] [client %h] \"%r\" %>s %b \"%{User-Agent}i\""
+#           LogFormat "%t [%v:%p] [client %h] \"%r\" %s %b \"%{User-Agent}i\""
 #       This is more in-keeping with the error log parser that contains an explicit [client xxx.xxx.xxx.xxx]
 #       but you could obviously alter this to match your own (or the default LogFormat)
 failregex = failregex = ^<HOST> -.*\"POST.*
