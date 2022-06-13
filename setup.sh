@@ -95,7 +95,7 @@ sed -i '/^# ok icmp codes for INPUT/a -A ufw-before-input -p icmp --icmp-type ec
 
 ##Protect against a DoS attack
 ###
-pacman -S --noconfirm iptables iptables-runit ipset fail2ban fail2ban-runit apache apache-runit
+pacman -Sy --noconfirm iptables iptables-runit ipset fail2ban fail2ban-runit apache apache-runit
 ln -s /etc/runit/sv/iptables/ /run/runit/service/
 ln -s /etc/runit/sv/fail2ban/ /run/runit/service/
 ln -s /etc/runit/sv/apache/ /run/runit/service/
@@ -258,16 +258,16 @@ sed -i '/#Include conf\/extra\/httpd-ssl.conf/s/^#//g' /etc/httpd/conf/httpd.con
 
 ## Crontab, Cronie and Rsync 
 ###
-#pacman -S --noconfirm cronie cronie-runit rsync rsync-runit
-#ln -s /etc/run/sv/cronie /run/runit/service/
-#ln -s /etc/run/sv/rsync /run/runit/service/
+pacman -Sy --noconfirm cronie cronie-runit rsync rsync-runit
+ln -s /etc/run/sv/cronie /run/runit/service/
+ln -s /etc/run/sv/rsync /run/runit/service/
 
-#export VISUAL=vim
-#export EDITOR=vim
+export VISUAL=vim
+export EDITOR=vim
 
-#echo "export EDITOR='/usr/bin/vim'" >> ~/.bashrc
-#echo "export VISUAL='/usr/bin/vim'" >> ~/.bashrc
-#source ~/.bashrc
+echo "export EDITOR='/usr/bin/vim'" >> ~/.bashrc
+echo "export VISUAL='/usr/bin/vim'" >> ~/.bashrc
+source ~/.bashrc
 
 ##change user to $name and try it out there if it works on reboot
 ## Create a script that updates all sources of packages
