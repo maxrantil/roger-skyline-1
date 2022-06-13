@@ -88,8 +88,8 @@ ufw allow 443/tcp
 ###
 sed -i '/^# ok icmp codes for INPUT/a -A ufw-before-input -p icmp --icmp-type echo-request -j DROP' /etc/ufw/before.rules
 
-#enable the firewall(will come later) :
-# ufw --force enable
+#enable the firewall
+ufw --force enable
 
 
 
@@ -141,8 +141,8 @@ maxretry = 60
 findtime = 30
 bantime = 6000" >> /etc/fail2ban/jail.local
 
-#ufw reload
 sv restart fail2ban
+ufw reload
 
 # Command to check why if wont work
 # /usr/bin/fail2ban-client -vv start
@@ -163,7 +163,7 @@ sv restart fail2ban
 #pacman -S --noconfirm bind
 
 ## First flush
-iptables -F
+#iptables -F
 ## List your settings
 # iptables -L
 ## Block ip
@@ -272,7 +272,6 @@ source ~/.bashrc
 ##change user to $name and try it out there if it works on reboot
 ## Create a script that updates all sources of packages
 ###
-cd 
 cat > update_packages.sh <<'EOF'
 #!/bin/bash
 
@@ -290,8 +289,8 @@ chmod 755 update_packages.sh
 #write out current crontab
 #echo new cron into cron file
 echo "# Update source to packages
-0 4 * * 0	~/update_packages.sh
-@reboot		~/update_packages.sh" >> mycron
+0 4 * * 0	.~/update_packages.sh
+@reboot		.~/update_packages.sh" >> mycron
 #install new cron file
 crontab mycron
 rm mycron
@@ -301,5 +300,5 @@ rm mycron
 #poweroff
 
 #enable the firewall :
-ufw --force enable
+ufw reload
 sv restart apache
