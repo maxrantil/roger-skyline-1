@@ -205,28 +205,6 @@ iptables -A INPUT -m state --state NEW -j SET --add-set scanned_ports src,dst
 
 ## SSL Cert
 ###
-#cd && mkdir -p selfsigned-certs && cd selfsigned-certs
-### Generate CA
-## Generate RSA
-#openssl genrsa -aes256 -out ca-key.pem 4096
-## Generate a public CA Cert
-#openssl req -new -x509 -sha256 -days 3650 -key ca-key.pem -out ca.pem
-### Generate Certificate
-## Create a RSA key
-#openssl genrsa -out cert-key.pem 4096
-## Create a Certificate Signing Request (CSR)
-#openssl req -new -sha256 -subj "/CN=${name}" -key cert-key.pem -out cert.csr
-## Create a extfile with all the alternative names
-#echo "subjectAltName=DNS:*.${name}.home,IP:${ip}" >> extfile.cnf
-## Create the certificate
-#openssl x509 -req -sha256 -days 3650 -in cert.csr -CA ca.pem -CAkey ca-key.pem -out cert.pem -extfile extfile.cnf -CAcreateserial
-## Combined the files
-#cat cert.pem > fullchain.pem
-#cat ca.pem >> ./fullchain.pem
-## Install the CA Cert as a trusted root CA
-#trust anchor --store ca.pem
-#update-ca-trust
-
 
 echo -e "[req]
 default_bit = 4096
@@ -244,13 +222,46 @@ chmod 755 gen_certificates.sh
 bash gen_certificates.sh
 
 #cd /etc/httpd/conf
-#openssl genrsa -des3 -out server.key 1024
+#openssl genrsa -out server.key 1024
 #openssl req -new -key server.key -out server.csr
-#cp server.key server.key.org
 #openssl rsa -in server.key.org -out server.key
 #openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
 
-#sed -i '/#Include conf\/extra\/httpd-ssl.conf/s/^#//g' /etc/httpd/conf/httpd.conf
+sed -i '/#Include conf\/extra\/httpd-ssl.conf/s/^#//g' /etc/httpd/conf/httpd.conf
+
+## Website
+mkdir -p /etc/httpd/conf/vhosts
+echo -e "<VirtualHost *:80>
+    ServerAdmin webmaster@${ethernet}
+    DocumentRoot \"/srv/${ethernet}\"
+    ServerName ${ethernet}
+    ServerAlias ${ethernet}
+    ErrorLog \"/var/log/httpd/${ethernet}-error_log\"
+    CustomLog \"/var/log/httpd/${ethernet}-access_log\" common
+
+    <Directory \"/srv/${ethernet}\">
+        Require all granted
+    </Directory>
+</VirtualHost>" >> /etc/httpd/conf/vhosts/${ethernet}
+mkdir -p /srv/${ethernet}
+echo "Include conf/vhosts/${ethernet}" >> /etc/httpd/conf/httpd.conf
+sv restart apache
+
+echo -e "<html>
+<head>
+<style type="text/css">
+ <!--
+ body {
+  background-image: url(https://c.ndtvimg.com/2021-05/umqnehr8_this-is-fine-meme-bitcoin-meme_625x300_19_May_21.jpg);
+  background-repeat: repeat;
+ }
+ -->
+</style>
+<title>Bitcoin</title>
+</head>
+<body>
+</body>
+</html>" > /srv/${ethernet}/index.html
 
 ## List all services
 ###
