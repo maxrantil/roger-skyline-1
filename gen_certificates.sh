@@ -29,7 +29,7 @@ case $1 in
          ;;
      *)
         ## Use hostname as Common Name
-        COMMON_NAME="/etc/hostname"
+        COMMON_NAME=$(cat /etc/hostname)
         ;;
 esac
 

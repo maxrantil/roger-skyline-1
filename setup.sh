@@ -228,11 +228,11 @@ bash gen_certificates.sh
 #openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
 
 #sed -i '/#Include conf\/extra\/httpd-ssl.conf/s/^#//g' /etc/httpd/conf/httpd.conf
-sed -i 's/Listen 80/Listen "${ethernet}:80"/g' /etc/httpd/conf/httpd.conf
+sed -i 's/Listen 80/Listen "'${ethernet}':80"/g' /etc/httpd/conf/httpd.conf
 sed -i '/#LoadModule ssl_module modules\/mod_ssl.so/s/^#//g' /etc/httpd/conf/httpd.conf
-sed -i 's/ServerAdmin you@example.com/"${name}@${hostname}"/g' /etc/httpd/conf/httpd.conf
-sed -i 's/#ServerName www.example.com:80/ServerName "${ethernet}:80"/g' /etc/httpd/conf/httpd.conf
-sed -i 's/DocumentRoot "/srv/httpd"/DocumentRoot "/srv/${ethernet}"/g' /etc/httpd/conf/httpd.conf
+sed -i 's/ServerAdmin you@example.com/ServerAdmin "'${name}'@'${hostname}'"/g' /etc/httpd/conf/httpd.conf
+sed -i 's/#ServerName www.example.com:80/ServerName "'${ethernet}':80"/g' /etc/httpd/conf/httpd.conf
+sed -i 's/DocumentRoot "/srv/httpd"/DocumentRoot "/srv/'${ethernet}'"/g' /etc/httpd/conf/httpd.conf
 
 ## Website
 hostname=$(cat /etc/hostname)
@@ -240,7 +240,7 @@ mkdir -p /etc/httpd/conf/vhosts
 echo -e "<VirtualHost *:80>
 	ServerAdmin \"${name}@${hostname}\"
 	DocumentRoot \"/srv/${ethernet}\"
-	ServerName \"${ethernet}\"
+	ServerName \"localhost\"
 	ServerAlias \"${ethernet}\"
 	ErrorLog \"/var/log/httpd/error_log\"
 	CustomLog \"/var/log/httpd/access_log\" common
@@ -251,14 +251,14 @@ echo -e "<VirtualHost *:80>
 </VirtualHost>
 
 <VirtualHost *:443>
- 	ServerName \"${ethernet}\"
+ 	ServerName \"localhost\"
    	ServerAdmin \"${name}@${hostname}\"
     	DocumentRoot \"/srv/${ethernet}\"
         SSLEngine On
         SSLCertificateFile /etc/httpd/conf/server.crt
         SSLCertificateKeyFile /etc/httpd/conf/server.key
+	SetEnvIf User-Agent \".*MSIE.*\" nokeepalive ssl-unuclean-shutdown
     	ErrorLog \"/var/log/httpd/error_log\"
-   	CustomLog \"/var/log/httpd/access_log\" common
 </VirtualHost>"  >> /etc/httpd/conf/vhosts/${ethernet}
 mkdir -p /srv/${ethernet}
 echo "Include conf/vhosts/${ethernet}" >> /etc/httpd/conf/httpd.conf
