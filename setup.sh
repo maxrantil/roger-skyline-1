@@ -266,7 +266,7 @@ sv restart apache
 
 echo -e "<html>
 <head>
-<style type="text/css">
+<style type=\"text/css\">
  <!--
  body {
   background-image: url(https://c.ndtvimg.com/2021-05/umqnehr8_this-is-fine-meme-bitcoin-meme_625x300_19_May_21.jpg);
