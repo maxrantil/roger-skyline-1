@@ -228,33 +228,38 @@ bash gen_certificates.sh
 #openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
 
 #sed -i '/#Include conf\/extra\/httpd-ssl.conf/s/^#//g' /etc/httpd/conf/httpd.conf
+sed -i 's/Listen 80/Listen "${ethernet}:80"/g' /etc/httpd/conf/httpd.conf
+sed -i '/#LoadModule ssl_module modules\/mod_ssl.so/s/^#//g' /etc/httpd/conf/httpd.conf
+sed -i 's/ServerAdmin you@example.com/"${name}@${hostname}"/g' /etc/httpd/conf/httpd.conf
+sed -i 's/#ServerName www.example.com:80/ServerName "${ethernet}:80"/g' /etc/httpd/conf/httpd.conf
+sed -i 's/DocumentRoot "/srv/httpd"/DocumentRoot "/srv/${ethernet}"/g' /etc/httpd/conf/httpd.conf
 
 ## Website
 hostname=$(cat /etc/hostname)
 mkdir -p /etc/httpd/conf/vhosts
 echo -e "<VirtualHost *:80>
-    ServerAdmin ${name}@${hostname}
-    DocumentRoot \"/srv/${ethernet}\"
-    ServerName ${ethernet}
-    ServerAlias ${ethernet}
-    ErrorLog \"/var/log/httpd/${ethernet}-error_log\"
-    CustomLog \"/var/log/httpd/${ethernet}-access_log\" common
-    Redirect / https://${ethernet}
-
-    <Directory \"/srv/${ethernet}\">
-        Require all granted
-    </Directory>
+	ServerAdmin \"${name}@${hostname}\"
+	DocumentRoot \"/srv/${ethernet}\"
+	ServerName \"${ethernet}\"
+	ServerAlias \"${ethernet}\"
+	ErrorLog \"/var/log/httpd/error_log\"
+	CustomLog \"/var/log/httpd/access_log\" common
+	Redirect \"/\" \"https://${ethernet}\"
+	<Directory \"/srv/${ethernet}\">
+		Require all granted
+	</Directory>
 </VirtualHost>
 
 <VirtualHost *:443>
-    	ServerName ${ethernet}
-    	ServerAdmin ${name}@${hostname}
+ 	ServerName \"${ethernet}\"
+   	ServerAdmin \"${name}@${hostname}\"
     	DocumentRoot \"/srv/${ethernet}\"
         SSLEngine On
         SSLCertificateFile /etc/httpd/conf/server.crt
         SSLCertificateKeyFile /etc/httpd/conf/server.key
-    	ErrorLog \"/var/log/httpd/${ethernet}-error_log\"
-   	CustomLog \"/var/log/httpd/${ethernet}-access_log\" common" >> /etc/httpd/conf/vhosts/${ethernet}
+    	ErrorLog \"/var/log/httpd/error_log\"
+   	CustomLog \"/var/log/httpd/access_log\" common
+</VirtualHost>"  >> /etc/httpd/conf/vhosts/${ethernet}
 mkdir -p /srv/${ethernet}
 echo "Include conf/vhosts/${ethernet}" >> /etc/httpd/conf/httpd.conf
 sv restart apache
@@ -313,8 +318,8 @@ chmod 755 update_packages.sh
 #write out current crontab
 #echo new cron into cron file
 echo "# Update source to packages
-0 4 * * 0	.~/update_packages.sh
-@reboot		.~/update_packages.sh" >> mycron
+0 4 * * 0	~/update_packages.sh
+@reboot		~/update_packages.sh" >> mycron
 #install new cron file
 crontab mycron
 rm mycron
