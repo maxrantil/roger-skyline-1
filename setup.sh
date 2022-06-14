@@ -47,7 +47,7 @@ getip() { \
 ## Install packages and enable them
 ###
 
-pacman -Syu --noconfirm openssh-runit ufw ufw-runit
+pacman -Sy --noconfirm openssh-runit ufw ufw-runit
 
 ln -s /etc/runit/sv/sshd /run/runit/service/
 ln -s /etc/runit/sv/ufw /run/runit/service/
