@@ -227,22 +227,34 @@ bash gen_certificates.sh
 #openssl rsa -in server.key.org -out server.key
 #openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
 
-sed -i '/#Include conf\/extra\/httpd-ssl.conf/s/^#//g' /etc/httpd/conf/httpd.conf
+#sed -i '/#Include conf\/extra\/httpd-ssl.conf/s/^#//g' /etc/httpd/conf/httpd.conf
 
 ## Website
+hostname=$(cat /etc/hostname)
 mkdir -p /etc/httpd/conf/vhosts
 echo -e "<VirtualHost *:80>
-    ServerAdmin webmaster@${ethernet}
+    ServerAdmin ${name}@${hostname}
     DocumentRoot \"/srv/${ethernet}\"
     ServerName ${ethernet}
     ServerAlias ${ethernet}
     ErrorLog \"/var/log/httpd/${ethernet}-error_log\"
     CustomLog \"/var/log/httpd/${ethernet}-access_log\" common
+    Redirect / https://${ethernet}
 
     <Directory \"/srv/${ethernet}\">
         Require all granted
     </Directory>
-</VirtualHost>" >> /etc/httpd/conf/vhosts/${ethernet}
+</VirtualHost>
+
+<VirtualHost *:443>
+    	ServerName ${ethernet}
+    	ServerAdmin ${name}@${hostname}
+    	DocumentRoot \"/srv/${ethernet}\"
+        SSLEngine On
+        SSLCertificateFile /etc/httpd/conf/server.crt
+        SSLCertificateKeyFile /etc/httpd/conf/server.key
+    	ErrorLog \"/var/log/httpd/${ethernet}-error_log\"
+   	CustomLog \"/var/log/httpd/${ethernet}-access_log\" common" >> /etc/httpd/conf/vhosts/${ethernet}
 mkdir -p /srv/${ethernet}
 echo "Include conf/vhosts/${ethernet}" >> /etc/httpd/conf/httpd.conf
 sv restart apache
