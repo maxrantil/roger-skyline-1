@@ -217,9 +217,9 @@ stateOrProvinceName     = Nyland
 localityName            = Helsinki
 organizationName        = ${name}" >> /etc/httpd/conf/cert_ext.cnf
 
-#curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/gen_certificates.sh > gen_certificates.sh
-#chmod 755 gen_certificates.sh
-#bash gen_certificates.sh
+curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/gen_certificates.sh > gen_certificates.sh
+chmod 755 gen_certificates.sh
+bash gen_certificates.sh
 
 ##cd /etc/httpd/conf
 ##openssl genrsa -out server.key 1024
@@ -267,12 +267,10 @@ hostname=$(cat /etc/hostname)
 echo -e "<html>
 <head>
 <style type=\"text/css\">
- <!--
  body {
   background-image: url(https://c.ndtvimg.com/2021-05/umqnehr8_this-is-fine-meme-bitcoin-meme_625x300_19_May_21.jpg);
   background-repeat: repeat;
  }
- -->
 </style>
 <title>Bitcoin</title>
 </head>
