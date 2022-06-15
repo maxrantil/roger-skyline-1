@@ -39,7 +39,6 @@ getip() { \
 		ethernet=$(ip r | awk '/'$gateway'/ {print $9}')
 		broadcast=$(ip a | awk '/'$ethernet'/ {print $4}')
 		eth_mask=$(ip a | awk '/'$ethernet'/ {print $2}')
-		hostname=$(cat /etc/hostname)
 		}
 
 ## Script Main starts here
@@ -97,6 +96,7 @@ ufw --force enable
 ##Protect against a DoS attack
 ###
 pacman -Sy --noconfirm iptables iptables-runit ipset fail2ban fail2ban-runit apache apache-runit
+ln -s /etc/runit/sv/iptables/ /run/runit/service/
 ln -s /etc/runit/sv/iptables/ /run/runit/service/
 ln -s /etc/runit/sv/fail2ban/ /run/runit/service/
 ln -s /etc/runit/sv/apache/ /run/runit/service/
@@ -219,7 +219,6 @@ localityName            = Helsinki
 organizationName        = ${name}" >> /etc/httpd/conf/cert_ext.cnf
 
 ##openssl genrsa -out server.key 1024
-##openssl req -new -key server.key -out server.csr
 ##openssl rsa -in server.key.org -out server.key
 ##openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
 
@@ -227,20 +226,19 @@ curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/gen_cert
 chmod 755 gen_certificates.sh
 bash gen_certificates.sh
 
-#sed -i 's/Listen 80/Listen "'${ethernet}':80"/g' /etc/httpd/conf/httpd.conf
+sed -i 's/Listen 80/Listen "'${ethernet}':80"/g' /etc/httpd/conf/httpd.conf
 sed -i '/#LoadModule ssl_module modules\/mod_ssl.so/s/^#//g' /etc/httpd/conf/httpd.conf
 sed -i '/#LoadModule socache_shmcb_module modules\/mod_socache_shmcb.so/s/^#//g' /etc/httpd/conf/httpd.conf
 sed -i 's/ServerAdmin you@example.com/ServerAdmin "'${name}@${hostname}'"/g' /etc/httpd/conf/httpd.conf
-sed -i 's/#ServerName www.example.com:80/ServerName "localhost:80"/g' /etc/httpd/conf/httpd.conf
+sed -i 's/#ServerName www.example.com:80/ServerName "'${hostname}':80"/g' /etc/httpd/conf/httpd.conf
 #sed -i 's/DocumentRoot "\/srv\/httpd"/DocumentRoot "/srv/'${ethernet}'"/g' /etc/httpd/conf/httpd.conf
 #sed -i 's/<Directory "\/srv\/httpd"/<Directory "/srv/'${ethernet}'"/g' /etc/httpd/conf/httpd.conf
 sed -i '/#Include conf\/extra\/httpd-ssl.conf/s/^#//g' /etc/httpd/conf/httpd.conf
-sed -i 's/ServerName www.example.com:443/ServerName "localhost:443"/g' /etc/httpd/conf/extra/httpd-ssl.conf
-sed -i 's/ServerAdmin you@example.com:443/ServerName "'${name}@${hostname}':443"/g' /etc/httpd/conf/extra/httpd-ssl.conf
+sed -i 's/ServerName www.example.com:443/ServerName "'${hostname}':443"/g' /etc/httpd/conf/extra/httpd-ssl
+sed -i 's/ServerAdmin you@example.com/ServerAdmin "'${name}@${hostname}'"/g' /etc/httpd/conf/extra/httpd-ssl.conf
 
 ## Website
-echo Redirect \"/\" \"https://"${ethernet}"\" >> /etc/httpd/conf/httpd.conf
-sv restart apache
+#echo Redirect \"/\" \"https://"${ethernet}"\" >> /etc/httpd/conf/httpd.conf
 
 echo -e "<html>
 <head>
@@ -263,9 +261,11 @@ echo -e "<html>
 
 ## Crontab, Cronie and Rsync 
 ###
-pacman -Sy --noconfirm cronie cronie-runit rsync rsync-runit
-ln -s /etc/run/sv/cronie /run/runit/service/
-ln -s /etc/run/sv/rsync /run/runit/service/
+pacman -Sy --noconfirm cronie cronie-runit
+ln -s /etc/run/sv/cronie/ /run/runit/service/
+
+pacman -Sy --noconfirm rsync rsync-runit
+ln -s /etc/run/sv/rsyncd/ /run/runit/service/
 
 export VISUAL=vim
 export EDITOR=vim
@@ -306,4 +306,5 @@ rm mycron
 
 #enable the firewall :
 ufw reload
-sv restart apache
+sv stop apache
+sv start apache
