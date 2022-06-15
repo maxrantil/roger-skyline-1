@@ -6,7 +6,7 @@ SERVER_CSR="$PATH/server.csr"
 SERVER_CRT="$PATH/server.crt"
 EXTFILE="$PATH/cert_ext.cnf"
 OPENSSL_CMD="/usr/bin/openssl"
-COMMON_NAME=`cat /etc/hostname`
+COMMON_NAME=`/bin/cat /etc/hostname`
 
 # generating server key
 echo "Generating private key"

@@ -236,7 +236,7 @@ sed -i 's/#ServerName www.example.com:80/ServerName "localhost:80"/g' /etc/httpd
 sed -i '/#Include conf\/extra\/httpd-ssl.conf/s/^#//g' /etc/httpd/conf/httpd.conf
 
 ## Website
-echo Redirect \"/\" \"https://'${ethernet}'\" >> /etc/httpd/conf/httpd.conf
+echo Redirect \"/\" \"https://"${ethernet}"'\" >> /etc/httpd/conf/httpd.conf
 sv restart apache
 
 echo -e "<html>
