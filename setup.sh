@@ -217,52 +217,27 @@ stateOrProvinceName     = Nyland
 localityName            = Helsinki
 organizationName        = ${name}" >> /etc/httpd/conf/cert_ext.cnf
 
-curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/gen_certificates.sh > gen_certificates.sh
-chmod 755 gen_certificates.sh
-bash gen_certificates.sh
-
-##cd /etc/httpd/conf
 ##openssl genrsa -out server.key 1024
 ##openssl req -new -key server.key -out server.csr
 ##openssl rsa -in server.key.org -out server.key
 ##openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
 
+curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/gen_certificates.sh > gen_certificates.sh
+chmod 755 gen_certificates.sh
+bash gen_certificates.sh
+
 #sed -i 's/Listen 80/Listen "'${ethernet}':80"/g' /etc/httpd/conf/httpd.conf
-#sed -i '/#LoadModule ssl_module modules\/mod_ssl.so/s/^#//g' /etc/httpd/conf/httpd.conf
+sed -i '/#LoadModule ssl_module modules\/mod_ssl.so/s/^#//g' /etc/httpd/conf/httpd.conf
+sed -i '/#LoadModule socache_shmcb_module modules\/mod_socache_shmcb.so/s/^#//g' /etc/httpd/conf/httpd.conf
 #sed -i 's/ServerAdmin you@example.com/ServerAdmin "'${name}@${hostname}'"/g' /etc/httpd/conf/httpd.conf
-#sed -i 's/#ServerName www.example.com:80/ServerName "'${ethernet}':80"/g' /etc/httpd/conf/httpd.conf
+sed -i 's/#ServerName www.example.com:80/ServerName "localhost:80"/g' /etc/httpd/conf/httpd.conf
 #sed -i 's/DocumentRoot "\/srv\/httpd"/DocumentRoot "/srv/'${ethernet}'"/g' /etc/httpd/conf/httpd.conf
 #sed -i 's/<Directory "\/srv\/httpd"/<Directory "/srv/'${ethernet}'"/g' /etc/httpd/conf/httpd.conf
+sed -i '/#Include conf\/extra\/httpd-ssl.conf/s/^#//g' /etc/httpd/conf/httpd.conf
 
 ## Website
-hostname=$(cat /etc/hostname)
-#mkdir -p /etc/httpd/conf/vhosts
-#echo -e "<VirtualHost *:80>
-#	ServerAdmin \"${name}@${hostname}\"
-#	DocumentRoot \"/srv/${ethernet}\"
-#	ServerName \"localhost\"
-#	ServerAlias \"${ethernet}\"
-#	ErrorLog \"/var/log/httpd/error_log\"
-#	CustomLog \"/var/log/httpd/access_log\" common
-#	Redirect \"/\" \"https://${ethernet}\"
-#	<Directory \"/srv/${ethernet}\">
-#		Require all granted
-#	</Directory>
-#</VirtualHost>
-#
-#<VirtualHost *:443>
-# 	ServerName \"localhost\"
-#   	ServerAdmin \"${name}@${hostname}\"
-#    	DocumentRoot \"/srv/${ethernet}\"
-#       SSLEngine On
-#       SSLCertificateFile /etc/httpd/conf/server.crt
-#       SSLCertificateKeyFile /etc/httpd/conf/server.key
-#	SetEnvIf User-Agent \".*MSIE.*\" nokeepalive ssl-unuclean-shutdown
-#    	ErrorLog \"/var/log/httpd/error_log\"
-#</VirtualHost>"  >> /etc/httpd/conf/vhosts/${ethernet}
-#mkdir -p /srv/${ethernet}
-#echo "Include conf/vhosts/${ethernet}" >> /etc/httpd/conf/httpd.conf
-#sv restart apache
+echo Redirect \"/\" \"https://'${ethernet}'\" >> /etc/httpd/conf/httpd.conf
+sv restart apache
 
 echo -e "<html>
 <head>
@@ -276,7 +251,7 @@ echo -e "<html>
 </head>
 <body>
 </body>
-</html>" > /srv/${ethernet}/index.html
+</html>" > /srv/http/index.html
 
 ## List all services
 ###

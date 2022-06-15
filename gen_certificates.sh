@@ -6,32 +6,7 @@ SERVER_CSR="$PATH/server.csr"
 SERVER_CRT="$PATH/server.crt"
 EXTFILE="$PATH/cert_ext.cnf"
 OPENSSL_CMD="/usr/bin/openssl"
-COMMON_NAME="$1"
-
-function show_usage {
-    printf "Usage: $0 [options [parameters]]\n"
-    printf "\n"
-    printf "Options:\n"
-    printf " -cn, Provide Common Name for the certificate\n"
-    printf " -h|--help, print help section\n"
-
-    return 0
-}
-
-case $1 in
-     -cn)
-         shift
-         COMMON_NAME="$1"
-         ;;
-     --help|-h)
-         show_usage
-         exit 0
-         ;;
-     *)
-        ## Use hostname as Common Name
-        COMMON_NAME=$(cat /etc/hostname)
-        ;;
-esac
+COMMON_NAME=`cat /etc/hostname`
 
 # generating server key
 echo "Generating private key"
