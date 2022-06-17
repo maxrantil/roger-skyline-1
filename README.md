@@ -14,13 +14,13 @@ root
 artix
 ```
 
-# option 1: run from script
+## option 1: run from script
 
 ```
 curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/deploy.sh > deploy.sh && bash deploy.sh
 ```
 
-# option 2: manually
+## option 2: manually
 
 to list partitions
 ```
@@ -110,7 +110,7 @@ mount /dev/sda4 /mnt/home
 ```
 
 
-## install Artix:
+# install Artix:
 with the necessary packages
 ```
 basestrap /mnt base base-devel runit elogind-runit linux linux-firmware vim
@@ -127,7 +127,7 @@ artix-chroot /mnt
 ```
 
 
-# NetworkManager and grub:
+## NetworkManager and grub:
 
 install NetworkManager
 ```
@@ -196,7 +196,7 @@ Log in as your root to complete the post-installation configuration.
 
 
 
-## On fresh install
+# On fresh install
 
 log in with root and the new password you have chose
 
@@ -206,14 +206,14 @@ sudo ln -s  /etc/runit/sv/NetworkManager /run/runit/service/NetworkManager
 ```
 
 
-# optin 1, run script
+## optin 1, run script
 
 ```
 curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/setup.sh > setup.sh && bash setup.sh
 
 ```
 
-# option 2, manually
+## option 2, manually
 
 add user:
 ```
@@ -244,7 +244,7 @@ sudo whoami
 > root
 ```
 
-# ssh (secure shell):
+## ssh (secure shell):
 
 install:
 ```
@@ -292,7 +292,7 @@ PasswordAuthentication no
 
 
 
-# ufw (uncomplicated firewall)
+## ufw (uncomplicated firewall)
 
 install:
 ```
