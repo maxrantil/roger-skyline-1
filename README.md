@@ -1,11 +1,11 @@
-# roger-skyline-1 on Artix(runit) Linux
+# roger-skyline-1 on Artix runit
 
 download the (artix-base-runit-20220123-x86_64.iso) file from http://ftp.ludd.ltu.se/artix/iso/
-and open that in a new VM (I use VirtualBox): 
+and open that in a VM (I use VirtualBox): 
 ```
-Name: roger-skyline-1
+Name: 'roger-skyline-1'
 Type: 'Linux'
-Version: 'Linux 2.6 / 3.x / 4.x (64-bit)'.
+Version: 'Linux 2.6 / 3.x / 4.x (64-bit)'
 ```
 
 Login as 'root' with passwork 'artix'
@@ -17,14 +17,12 @@ artix
 # option 1: run from script
 
 ```
-curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/deploy.sh > deploy.sh
-bash deploy.sh
+curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/deploy.sh > deploy.sh && bash deploy.sh
 ```
 
 # option 2: manually
 
-write paritions
-look for it:
+to list partitions
 ```
 lsblk
 ```
@@ -34,7 +32,7 @@ fdisk -l
 ```
 
 for me it is /dev/sda
-to start the process:
+write paritions:
 ```
 fdisk /dev/sda
 o
@@ -111,7 +109,9 @@ mount home partion:
 mount /dev/sda4 /mnt/home
 ```
 
+
 ## install Artix:
+with the necessary packages
 ```
 basestrap /mnt base base-devel runit elogind-runit linux linux-firmware vim
 ```
@@ -136,9 +136,7 @@ pacman -Sy networkmanager networkmanager-runit network-manager-applet
 
 install grub without UEFI
 ```
-pacman -S grub
-grub-install --target=i386-pc /dev/sda
-grub-mkconfig -o /boot/grub/grub.cfg
+pacman -S grub && grub-install --target=i386-pc /dev/sda && grub-mkconfig -o /boot/grub/grub.cfg
 ```
 
 set new password for root:
@@ -168,45 +166,16 @@ make the system run from the hardware clock
 hwclock --systohc
 ```
 
-set hostname in file /etc/hostname :
+set hostname of choice in file /etc/hostname :
 ```
-echo desktop > /etc/hostname
+echo <hostname> > /etc/hostname
 ```
 
-edit /etc/hosts , use the hostname on last line:
+edit /etc/hosts:
 ```
 127.0.0.1   localhost
 ::1         localhost
-127.0.0..1  desktop.localdomain desktop
-```
-
-add user:
-```
-useradd --create-home mqx
-```
-create password for user:
-```
-passwd mqx
-```
-add user to the wheel group:
-```
-usermod -aG wheel mqx
-```
-Now edit the file /etc/sudoers so that the wheel group has sudo permissions. To do this, open the sudoer's file and uncomment the line # %wheel ALL=(ALL) ALL
-```
-EDITOR=vim visudo
-```
-to test if its correcct:
-```
-su mqx
-```
-```
-whoami
-> mqx
-```
-```
-sudo whoami
-> root
+127.0.0..1  <hostname>.localdomain <hostname>
 ```
 
 exit chroot environment:
@@ -229,17 +198,51 @@ Log in as your root to complete the post-installation configuration.
 
 ## On fresh install
 
-log in with your user:
-```
-username
-and the password you chose for it
-```
+log in with root and the new password you have chose
 
 enable NetworkManager for internet access:
 ```
 sudo ln -s  /etc/runit/sv/NetworkManager /run/runit/service/NetworkManager
 ```
 
+
+# optin 1, run script
+
+```
+curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/setup.sh > setup.sh && bash setup.sh
+
+```
+
+# option 2, manually
+
+add user:
+```
+useradd --create-home <username>
+```
+create password for user:
+```
+passwd <username>
+```
+add user to the wheel group:
+```
+usermod -aG wheel <username>
+```
+Now edit the file /etc/sudoers so that the wheel group has sudo permissions. To do this, open the sudoer's file and uncomment the line # %wheel ALL=(ALL) ALL
+```
+EDITOR=vim visudo
+```
+to test if its correcct:
+```
+su <username>
+```
+```
+whoami
+> <username>
+```
+```
+sudo whoami
+> root
+```
 
 # ssh (secure shell):
 
@@ -250,10 +253,6 @@ sudo pacman -Sy openssh-runit openssh
 enable ssh:
 ```
 sudo ln -s  /etc/runit/sv/sshd /run/runit/service/sshd
-```
-to make it work, reboot:
-```
-sudo reboot
 ```
 copy public key from host to connect to client without password:
 ```
