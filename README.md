@@ -300,7 +300,7 @@ sudo pacman -S ufw ufw-runit
 ```
 link it:
 ```
-sudo ln -s /etc/runit/sv/ufw /run/runit/service/ufw
+sudo ln -s /etc/runit/sv/ufw/ /run/runit/service/
 ```
 
 open firewall for port 61216:
