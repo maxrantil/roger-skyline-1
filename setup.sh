@@ -194,6 +194,7 @@ iptables -A INPUT -m state --state NEW -m set --match-set port_scanners src -j D
 iptables -A INPUT -m state --state NEW -j SET --add-set scanned_ports src,dst
 iptables -I INPUT -p tcp --dport 80 -j ACCEPT
 iptables -I INPUT -p tcp --dport 443 -j ACCEPT
+iptables -I INPUT -p tcp --dport ${port} -j ACCEPT
 
 ## Save the rules
 /sbin/iptables-save
