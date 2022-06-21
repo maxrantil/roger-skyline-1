@@ -78,7 +78,7 @@ sv restart sshd
 ## Enable Firewall (ufw)
 ###
 #open firewall for ssh port:
-ufw allow ${port}
+ufw allow ${port}/tcp
 
 #for our web server we also need to open for port 80(http) and port 442(TCP/IP):
 ufw allow 80/tcp
@@ -95,10 +95,15 @@ ufw --force enable
 
 ##Protect against a DoS attack
 ###
-pacman -Sy --noconfirm iptables iptables-runit ipset fail2ban fail2ban-runit apache apache-runit
+pacman -Sy --noconfirm ipset
+
+pacman -Sy --noconfirm iptables iptables-runit
 ln -s /etc/runit/sv/iptables/ /run/runit/service/
-ln -s /etc/runit/sv/iptables/ /run/runit/service/
+
+pacman -Sy --noconfirm fail2ban fail2ban-runit apache apache-runit
 ln -s /etc/runit/sv/fail2ban/ /run/runit/service/
+
+pacman -Sy --noconfirm apache apache-runit
 ln -s /etc/runit/sv/apache/ /run/runit/service/
 
 cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
@@ -226,19 +231,19 @@ curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/gen_cert
 chmod 755 gen_certificates.sh
 bash gen_certificates.sh
 
-sed -i 's/Listen 80/Listen "'${ethernet}':80"/g' /etc/httpd/conf/httpd.conf
 sed -i '/#LoadModule ssl_module modules\/mod_ssl.so/s/^#//g' /etc/httpd/conf/httpd.conf
 sed -i '/#LoadModule socache_shmcb_module modules\/mod_socache_shmcb.so/s/^#//g' /etc/httpd/conf/httpd.conf
 sed -i 's/ServerAdmin you@example.com/ServerAdmin "'${name}@${hostname}'"/g' /etc/httpd/conf/httpd.conf
 sed -i 's/#ServerName www.example.com:80/ServerName "'${hostname}':80"/g' /etc/httpd/conf/httpd.conf
-#sed -i 's/DocumentRoot "\/srv\/httpd"/DocumentRoot "/srv/'${ethernet}'"/g' /etc/httpd/conf/httpd.conf
-#sed -i 's/<Directory "\/srv\/httpd"/<Directory "/srv/'${ethernet}'"/g' /etc/httpd/conf/httpd.conf
 sed -i '/#Include conf\/extra\/httpd-ssl.conf/s/^#//g' /etc/httpd/conf/httpd.conf
+sed -i '/#Include conf\/extra\/httpd-vhosts.conf/s/^#//g' /etc/httpd/conf/httpd.conf
 sed -i 's/ServerName www.example.com:443/ServerName "'${hostname}':443"/g' /etc/httpd/conf/extra/httpd-ssl
 sed -i 's/ServerAdmin you@example.com/ServerAdmin "'${name}@${hostname}'"/g' /etc/httpd/conf/extra/httpd-ssl.conf
+echo -e "<VirtualHost *:80>
+	Redirect / https://${ethernet}
+</VirtualHost>" > /etc/httpd/conf/extra/httpd-vhosts.conf
 
 ## Website
-#echo Redirect \"/\" \"https://"${ethernet}"\" >> /etc/httpd/conf/httpd.conf
 
 echo -e "<html>
 <head>
