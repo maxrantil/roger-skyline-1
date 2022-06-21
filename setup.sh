@@ -47,10 +47,11 @@ getip() { \
 ## Install packages and enable them
 ###
 
-pacman -Sy --noconfirm openssh-runit ufw ufw-runit
+pacman -Sy --noconfirm openssh-runit
+##pacman -Sy --noconfirm ufw ufw-runit
 
 ln -s /etc/runit/sv/sshd /run/runit/service/
-ln -s /etc/runit/sv/ufw /run/runit/service/
+##ln -s /etc/runit/sv/ufw /run/runit/service/
 
 ## Create user with sudo rights
 ###
@@ -78,33 +79,33 @@ sv restart sshd
 ## Enable Firewall (ufw)
 ###
 #open firewall for ssh port:
-ufw allow ${port}/tcp
+##ufw allow ${port}/tcp
 
 #for our web server we also need to open for port 80(http) and port 442(TCP/IP):
-ufw allow 80/tcp
-ufw allow 443/tcp
+##ufw allow 80/tcp
+##ufw allow 443/tcp
 
 ## Bonus, hide the server so noone cant ping it
 ###
-sed -i '/^# ok icmp codes for INPUT/a -A ufw-before-input -p icmp --icmp-type echo-request -j DROP' /etc/ufw/before.rules
+##sed -i '/^# ok icmp codes for INPUT/a -A ufw-before-input -p icmp --icmp-type echo-request -j DROP' /etc/ufw/before.rules
 
 #enable the firewall
-ufw --force enable
+##ufw --force enable
 
 
 
 ##Protect against a DoS attack
 ###
-pacman -Sy --noconfirm ipset
+pacman -S --noconfirm ipset
 
-pacman -Sy --noconfirm iptables iptables-runit
+pacman -S --noconfirm iptables iptables-runit
 ln -s /etc/runit/sv/iptables/ /run/runit/service/
 
-pacman -Sy --noconfirm fail2ban fail2ban-runit apache apache-runit
-ln -s /etc/runit/sv/fail2ban/ /run/runit/service/
-
-pacman -Sy --noconfirm apache apache-runit
+pacman -S --noconfirm apache apache-runit
 ln -s /etc/runit/sv/apache/ /run/runit/service/
+
+pacman -S --noconfirm fail2ban fail2ban-runit
+ln -s /etc/runit/sv/fail2ban/ /run/runit/service/
 
 cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 
@@ -148,7 +149,7 @@ findtime = 30
 bantime = 6000" >> /etc/fail2ban/jail.local
 
 sv restart fail2ban
-ufw reload
+##ufw reload
 
 # Command to check why if wont work
 # /usr/bin/fail2ban-client -vv start
@@ -191,6 +192,8 @@ iptables -A INPUT -m state --state INVALID -j DROP
 iptables -A INPUT -m state --state NEW -m set ! --match-set scanned_ports src,dst -m hashlimit --hashlimit-above 1/hour --hashlimit-burst 5 --hashlimit-mode srcip --hashlimit-name portscan --hashlimit-htable-expire 10000 -j SET --add-set port_scanners src --exist
 iptables -A INPUT -m state --state NEW -m set --match-set port_scanners src -j DROP
 iptables -A INPUT -m state --state NEW -j SET --add-set scanned_ports src,dst
+iptables -I INPUT -p tcp --dport 80 -j ACCEPT
+iptables -I INPUT -p tcp --dport 443 -j ACCEPT
 
 ## Save the rules
 /sbin/iptables-save
@@ -310,6 +313,6 @@ rm mycron
 #poweroff
 
 #enable the firewall :
-ufw reload
+##ufw reload
 sv stop apache
 sv start apache
