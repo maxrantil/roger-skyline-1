@@ -260,10 +260,8 @@ ssh-copy-id -i ~/.ssh/<pub key> <username>@<ip> -p <port>
 ```
 
 change port in /etc/ssh/sshd_config file,
-uncomment the line with '#Port 22' and change the number to whatever, read wiki. 
-
-  use wiki page (https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers) for detailed documentation.
-"The range 49152–65535 contains dynamic or private ports that cannot be registered with IANA"
+uncomment the line with '#Port 22' and change the integer to your choice.
+(https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers) for detailed documentation.
 
 i choose 'Port 61216'.
 restart sshd service:
