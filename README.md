@@ -78,7 +78,7 @@ mkfs.ext4 /dev/sda3
 mkfs.ext4 /dev/sda4
 ```
 
-make swap partion on one of them e.g. /dev/sda/2
+make swap partion on /dev/sda2
 ```
 mkswap /dev/sda2
 swapon /dev/sda2
