@@ -286,8 +286,8 @@ source ~/.bashrc
 ##change user to $name and try it out there if it works on reboot
 ## Create a script that updates all sources of packages
 ###
-cat > update_packages.sh <<'EOF'
-#!/bin/bash
+cat > update_packages <<'EOF'
+#!/bin/sh
 
 ## Update all packages and sources
 updates_log=/var/log/update_script.log
@@ -296,9 +296,10 @@ printf "\nPackages Update %s\n" "$(date)" >> $updates_log
 pacman -Syu --noconfirm | sudo tee -a "$updates_log"
 
 ## Clear cache
-pacman -Sc --noconfirm
+pacman -Sc --noconfirm 2>&1
 EOF
-chmod 755 update_packages.sh
+chmod 755 update_packages
+mv update_packages /etc/cron.daily
 
 #write out current crontab
 #echo new cron into cron file
