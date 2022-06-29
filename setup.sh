@@ -330,12 +330,22 @@ chmod 755 ~/scrips/cron_md5
 cat > monitor_cronfile.sh <<'EOF'
 #!/bin/sh
 
-m1="(md5sum '/etc/crontab' | awk '{print $1}')"
-m2="(cat '~/scrips/cron_md5')"
+file=/etc/crontab
+old_sum=/var/log/crontab_sum.old
+new_sum=/var/log/crontab_sum.new
 
-if [ "$m1" != "$m2" ] ; then
-	md5sum /etc/crontab | awk '{print $1}' > ~/scrips/cron_md5
-	echo "KO" | mail -s "cronfile has changed" root@localhost
+if [ ! -f $old_sum ]
+then
+	shasum < $file > $old_sum	# Compute old sum (if it doesn't exist)
+	exit
+fi
+
+shasum < $file > $new_sum		# Compute new sum
+
+if [ "$(diff $old_sum $new_sum)" != "" ]
+then
+	mail -s "crontab has been modified!" root
+	shasum < $file > $old_sum
 fi
 EOF
 chmod 755 monitor_cronfile.sh
