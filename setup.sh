@@ -46,7 +46,9 @@ pacman_candy() { \
 		sed -Ei "s/^#(ParallelDownloads).*/\1 = 5/;/^#Color$/s/#//" /etc/pacman.conf
 		}
 
-installpkg(){ pacman --noconfirm -S "$1" >/dev/null 2>&1 ;}
+installpkg() {  \
+		pacman --noconfirm -S "$1" >/dev/null 2>&1
+		}
 
 ## Script Main starts here
 ####
