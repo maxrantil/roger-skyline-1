@@ -271,10 +271,10 @@ echo -e "<html>
 
 ## Crontab, Cronie and Rsync 
 ###
-pacman -Sy --noconfirm cronie cronie-runit
+pacman -S --noconfirm cronie cronie-runit
 ln -s /etc/run/sv/cronie/ /run/runit/service/
 
-pacman -Sy --noconfirm rsync rsync-runit
+pacman -S --noconfirm rsync rsync-runit
 ln -s /etc/run/sv/rsyncd/ /run/runit/service/
 
 export VISUAL=vim

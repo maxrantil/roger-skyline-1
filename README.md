@@ -315,3 +315,7 @@ enable the firewall:
 ```
 sudo ufw enable
 ```
+
+## cron
+https://www.adminschoice.com/crontab-quick-reference
+
