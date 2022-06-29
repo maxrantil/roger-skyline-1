@@ -41,8 +41,14 @@ getip() { \
 		eth_mask=$(ip a | awk '/'$ethernet'/ {print $2}')
 		}
 
+pacman_candy() { \
+		grep -q "ILoveCandy" /etc/pacman.conf || sed -i "/#VerbosePkgLists/a ILoveCandy" /etc/pacman.conf
+		sed -Ei "s/^#(ParallelDownloads).*/\1 = 5/;/^#Color$/s/#//" /etc/pacman.conf
+		}
 ## Script Main starts here
 ####
+
+pacman_candy
 
 ## Install packages and enable them
 ###
@@ -271,12 +277,10 @@ echo -e "<html>
 
 ## Crontab, Cronie and Rsync 
 ###
-pacman -S --noconfirm cronie
-pacman -S --noconfirm rsync
-pacman -S --noconfirm cronie-runit
-pacman -S --noconfirm rsync-runit
-
+pacman -S --noconfirm cronie cronie-runit
 ln -s /etc/run/sv/cronie/ /run/runit/service/
+
+pacman -S --noconfirm rsync rsync-runit
 ln -s /etc/run/sv/rsyncd/ /run/runit/service/
 
 export VISUAL=vim
@@ -334,20 +338,31 @@ fi
 EOF
 chmod 755 monitor_cronfile.sh
 
-pacman -S --noconfirm postfix
-pacman -S --noconfirm postfix-runit
+pacman -S --noconfirm postfix postfix-runit
 ln -s /etc/run/sv/postfix/ /run/runit/service/
 
-echo -e >> "myhostname = localhost
+echo -e "myhostname = localhost
 mydomain = localdomain
 mydestination = \$myhostname, localhost.\$mydomain, localhost
 inet_interfaces = \$myhostname, localhost
 mynetworks_style = host
-default_transport = error: outside mail is not deliverable" /etc/postfix/main.cf
+default_transport = error: outside mail is not deliverable" >> /etc/postfix/main.cf
 
 sed -i 's/#root:		you/root:		'${name}'/g' /etc/postfix/aliases
 postconf -e "home_mailbox = mail/"
 sv restart postfix
+
+
+pacman -S --noconfirm mutt
+
+echo -e "set mbox_type=Maildir
+set folder=\"/root/mail\"
+set mask=\"!^\\.[^.]\"
+set mbox=\"/root/mail\"
+set record=\"+.Sent\"
+set postponed=\"+.Drafts\"
+set spoolfile=\"/root/mail\"" > .muttrc
+
 #dialog --title "Done" --msgbox "After this the VM will poweroff."  10 60
 
 #poweroff
@@ -362,4 +377,5 @@ ln -s /etc/run/sv/rsyncd/ /run/runit/service/
 ##ufw reload
 sv stop apache
 sv start apache
+echo "Done."
 
