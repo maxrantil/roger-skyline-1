@@ -195,6 +195,7 @@ iptables -A INPUT -m state --state NEW -j SET --add-set scanned_ports src,dst
 iptables -I INPUT -p tcp --dport 80 -j ACCEPT
 iptables -I INPUT -p tcp --dport 443 -j ACCEPT
 iptables -I INPUT -p tcp --dport ${port} -j ACCEPT
+#iptables -A INPUT -p tcp -m tcp -m multiport ! --dports 80,443,${port} -j DROP
 
 ## Save the rules
 /sbin/iptables-save
@@ -304,8 +305,7 @@ mv update_packages /etc/cron.daily
 #write out current crontab
 #echo new cron into cron file
 echo "# Update source to packages
-0 4 * * 0	~/update_packages.sh
-@reboot		~/update_packages.sh" >> mycron
+@reboot		/etc/cron.daily/update_packages" >> mycron
 #install new cron file
 crontab mycron
 rm mycron
