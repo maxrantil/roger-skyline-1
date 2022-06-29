@@ -47,7 +47,7 @@ pacman_candy() { \
 		}
 
 installpkg() {  \
-		pacman --noconfirm -S "$1" >/dev/null 2>&1
+		pacman -S --noconfirm "$1" >/dev/null 2>&1
 		}
 
 ## Script Main starts here
@@ -260,7 +260,7 @@ sed -i 's/ServerAdmin you@example.com/ServerAdmin "'${name}@${hostname}'"/g' /et
 sed -i 's/#ServerName www.example.com:80/ServerName "'${hostname}':80"/g' /etc/httpd/conf/httpd.conf
 sed -i '/#Include conf\/extra\/httpd-ssl.conf/s/^#//g' /etc/httpd/conf/httpd.conf
 sed -i '/#Include conf\/extra\/httpd-vhosts.conf/s/^#//g' /etc/httpd/conf/httpd.conf
-sed -i 's/ServerName www.example.com:443/ServerName "'${hostname}':443"/g' /etc/httpd/conf/extra/httpd-ssl
+sed -i 's/ServerName www.example.com:443/ServerName "'${hostname}':443"/g' /etc/httpd/conf/extra/httpd-ssl.conf
 sed -i 's/ServerAdmin you@example.com/ServerAdmin "'${name}@${hostname}'"/g' /etc/httpd/conf/extra/httpd-ssl.conf
 echo -e "<VirtualHost *:80>
 	Redirect / https://${ethernet}
@@ -375,7 +375,7 @@ then
 fi
 EOF
 chmod 755 monitor_cronfile.sh
-mv monitor_cronfile.sh scrips
+mv monitor_cronfile.sh scripts
 
 #pacman -S --noconfirm postfix postfix-runit
 installpkg postfix
@@ -401,7 +401,7 @@ installpkg mutt
 
 echo -e "set mbox_type=Maildir
 set folder=\"/root/mail\"
-set mask=\"!^\\\\.[^.]\"
+set mask=\"!^\\\\\\\\.[^.]\"
 set mbox=\"/root/mail\"
 set record=\"+.Sent\"
 set postponed=\"+.Drafts\"
