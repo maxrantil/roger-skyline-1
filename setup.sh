@@ -271,10 +271,12 @@ echo -e "<html>
 
 ## Crontab, Cronie and Rsync 
 ###
-pacman -S --noconfirm cronie cronie-runit
-ln -s /etc/run/sv/cronie/ /run/runit/service/
+pacman -S --noconfirm cronie
+pacman -S --noconfirm rsync
+pacman -S --noconfirm cronie-runit
+pacman -S --noconfirm rsync-runit
 
-pacman -S --noconfirm rsync rsync-runit
+ln -s /etc/run/sv/cronie/ /run/runit/service/
 ln -s /etc/run/sv/rsyncd/ /run/runit/service/
 
 export VISUAL=vim
@@ -285,7 +287,7 @@ echo "export VISUAL='/usr/bin/vim'" >> ~/.bashrc
 source ~/.bashrc
 
 ##change user to $name and try it out there if it works on reboot
-## Create a script that updates all sources of packages
+## Create a script that updates all sources of packages once per week at 4AM and on reboot
 ###
 cat > update_packages <<'EOF'
 #!/bin/sh
@@ -300,21 +302,64 @@ pacman -Syu --noconfirm | sudo tee -a "$updates_log"
 pacman -Sc --noconfirm 2>&1
 EOF
 chmod 755 update_packages
-mv update_packages /etc/cron.daily
+mv update_packages /etc/cron.weekly
 
 #write out current crontab
 #echo new cron into cron file
 echo "# Update source to packages
-@reboot		/etc/cron.daily/update_packages" >> mycron
+@reboot		/etc/cron.weekly/update_packages >/dev/null 2>&1" >> mycron
 #install new cron file
 crontab mycron
 rm mycron
 
+# run at 4 AM
+sed -i 's/START_HOURS_RANGE=3-22/START_HOURS_RANGE=4-23/g' /etc/anacrontab
+
+#create a /etc/crontab file for the evaluation
+cat /var/spool/cron/root > /etc/crontab
+
+#script for check if there is changes to cronfile
+cat > monitor_cronfile.sh <<'EOF'
+#!/bin/sh
+
+touch ~/cron_md5
+chmod 755 ~/cron_md5
+m1="(md5sum '/etc/crontab' | awk '{print $1}')"
+m2="(cat '~/cron_md5')"
+
+if [ "$m1" != "$m2" ] ; then
+	md5sum /etc/crontab | awk '{print $1}' > ~/cron_md5
+	echo "KO" | mail -s "cronfile has changed" root@localhost
+fi
+EOF
+chmod 755 monitor_cronfile.sh
+
+pacman -S --noconfirm postfix
+pacman -S --noconfirm postfix-runit
+ln -s /etc/run/sv/postfix/ /run/runit/service/
+
+echo -e >> "myhostname = localhost
+mydomain = localdomain
+mydestination = \$myhostname, localhost.\$mydomain, localhost
+inet_interfaces = \$myhostname, localhost
+mynetworks_style = host
+default_transport = error: outside mail is not deliverable" /etc/postfix/main.cf
+
+sed -i 's/#root:		you/root:		'${name}'/g'
+postconf -e "home_mailbox = mail/"
+sv restart postfix
 #dialog --title "Done" --msgbox "After this the VM will poweroff."  10 60
 
 #poweroff
+
+#bug fix
+#rm -rf /run/runit/service/cronie
+#rm -rf /run/runit/service/rsyncd
+#ln -s /etc/run/sv/cronie/ /run/runit/service/
+#ln -s /etc/run/sv/rsyncd/ /run/runit/service/
 
 #enable the firewall :
 ##ufw reload
 sv stop apache
 sv start apache
+
