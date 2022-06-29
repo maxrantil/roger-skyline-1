@@ -4,11 +4,14 @@
 root
 artix
 
-curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/deploy.sh > deploy.sh
-bash deploy.sh
+## Run the Artix installation script
+###
+curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/deploy.sh > deploy.sh && sh deploy.sh
 
 ## on a fresh install activate internet with:
 ###
-ln -s /etc/runit/sv/NetworkManager /run/runit/service/NetworkManager
+ln -s /etc/runit/sv/NetworkManager /run/runit/service/
 
-curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/setup.sh > setup.sh
+## Then run the setup script
+###
+curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/setup.sh > setup.sh && sh setup.sh
