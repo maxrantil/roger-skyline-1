@@ -345,7 +345,7 @@ inet_interfaces = \$myhostname, localhost
 mynetworks_style = host
 default_transport = error: outside mail is not deliverable" /etc/postfix/main.cf
 
-sed -i 's/#root:		you/root:		'${name}'/g'
+sed -i 's/#root:		you/root:		'${name}'/g' /etc/postfix/aliases
 postconf -e "home_mailbox = mail/"
 sv restart postfix
 #dialog --title "Done" --msgbox "After this the VM will poweroff."  10 60
@@ -353,10 +353,10 @@ sv restart postfix
 #poweroff
 
 #bug fix
-#rm -rf /run/runit/service/cronie
-#rm -rf /run/runit/service/rsyncd
-#ln -s /etc/run/sv/cronie/ /run/runit/service/
-#ln -s /etc/run/sv/rsyncd/ /run/runit/service/
+rm -rf /run/runit/service/cronie
+rm -rf /run/runit/service/rsyncd
+ln -s /etc/run/sv/cronie/ /run/runit/service/
+ln -s /etc/run/sv/rsyncd/ /run/runit/service/
 
 #enable the firewall :
 ##ufw reload
