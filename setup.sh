@@ -302,12 +302,14 @@ echo -e "<html>
 #pacman -S --noconfirm cronie cronie-runit
 installpkg cronie
 installpkg cronie-runit
-ln -s /etc/runit/sv/cronie/ /run/runit/service/
 
 #pacman -S --noconfirm rsync rsync-runit
 installpkg rsync
 installpkg rsync-runit
+
+ln -s /etc/runit/sv/cronie/ /run/runit/service/
 ln -s /etc/runit/sv/rsyncd/ /run/runit/service/
+
 
 export VISUAL=vim
 export EDITOR=vim
@@ -380,6 +382,7 @@ mv monitor_cronfile.sh scripts
 #pacman -S --noconfirm postfix postfix-runit
 installpkg postfix
 installpkg postfix-runit
+
 ln -s /etc/runit/sv/postfix/ /run/runit/service/
 
 echo -e "
