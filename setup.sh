@@ -374,5 +374,7 @@ set spoolfile=\"/root/mail\"" > .muttrc
 sv stop apache
 sv start apache
 
+rm setup.sh
+rm gen_certificates.sh
 echo "Done."
 #dialog --title "Done" --msgbox "After this the VM will poweroff."  10 60
