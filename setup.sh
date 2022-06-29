@@ -278,10 +278,10 @@ echo -e "<html>
 ## Crontab, Cronie and Rsync 
 ###
 pacman -S --noconfirm cronie cronie-runit
-ln -s /etc/run/sv/cronie/ /run/runit/service/
+ln -s /etc/runit/sv/cronie/ /run/runit/service/
 
 pacman -S --noconfirm rsync rsync-runit
-ln -s /etc/run/sv/rsyncd/ /run/runit/service/
+ln -s /etc/runit/sv/rsyncd/ /run/runit/service/
 
 export VISUAL=vim
 export EDITOR=vim
@@ -311,7 +311,8 @@ mv update_packages /etc/cron.weekly
 #write out current crontab
 #echo new cron into cron file
 echo "# Update source to packages
-@reboot		/etc/cron.weekly/update_packages >/dev/null 2>&1" >> mycron
+@reboot		/etc/cron.weekly/update_packages >/dev/null 2>&1
+* * * * *	~/scripts/monitor_cronfile.sh >/dev/null 2>&1" >> mycron
 #install new cron file
 crontab mycron
 rm mycron
@@ -323,25 +324,28 @@ sed -i 's/START_HOURS_RANGE=3-22/START_HOURS_RANGE=4-23/g' /etc/anacrontab
 cat /var/spool/cron/root > /etc/crontab
 
 #script for check if there is changes to cronfile
+mkdir -p scripts
+touch ~/scrips/cron_md5
+chmod 755 ~/scrips/cron_md5
 cat > monitor_cronfile.sh <<'EOF'
 #!/bin/sh
 
-touch ~/cron_md5
-chmod 755 ~/cron_md5
 m1="(md5sum '/etc/crontab' | awk '{print $1}')"
-m2="(cat '~/cron_md5')"
+m2="(cat '~/scrips/cron_md5')"
 
 if [ "$m1" != "$m2" ] ; then
-	md5sum /etc/crontab | awk '{print $1}' > ~/cron_md5
+	md5sum /etc/crontab | awk '{print $1}' > ~/scrips/cron_md5
 	echo "KO" | mail -s "cronfile has changed" root@localhost
 fi
 EOF
 chmod 755 monitor_cronfile.sh
+mv monitor_cronfile.sh scrips
 
 pacman -S --noconfirm postfix postfix-runit
-ln -s /etc/run/sv/postfix/ /run/runit/service/
+ln -s /etc/runit/sv/postfix/ /run/runit/service/
 
-echo -e "myhostname = localhost
+echo -e "
+myhostname = localhost
 mydomain = localdomain
 mydestination = \$myhostname, localhost.\$mydomain, localhost
 inet_interfaces = \$myhostname, localhost
@@ -349,6 +353,7 @@ mynetworks_style = host
 default_transport = error: outside mail is not deliverable" >> /etc/postfix/main.cf
 
 sed -i 's/#root:		you/root:		'${name}'/g' /etc/postfix/aliases
+newaliases
 postconf -e "home_mailbox = mail/"
 sv restart postfix
 
@@ -357,25 +362,17 @@ pacman -S --noconfirm mutt
 
 echo -e "set mbox_type=Maildir
 set folder=\"/root/mail\"
-set mask=\"!^\\.[^.]\"
+set mask=\"!^\\\\.[^.]\"
 set mbox=\"/root/mail\"
 set record=\"+.Sent\"
 set postponed=\"+.Drafts\"
 set spoolfile=\"/root/mail\"" > .muttrc
 
-#dialog --title "Done" --msgbox "After this the VM will poweroff."  10 60
-
-#poweroff
-
-#bug fix
-rm -rf /run/runit/service/cronie
-rm -rf /run/runit/service/rsyncd
-ln -s /etc/run/sv/cronie/ /run/runit/service/
-ln -s /etc/run/sv/rsyncd/ /run/runit/service/
 
 #enable the firewall :
 ##ufw reload
 sv stop apache
 sv start apache
-echo "Done."
 
+echo "Done."
+#dialog --title "Done" --msgbox "After this the VM will poweroff."  10 60
