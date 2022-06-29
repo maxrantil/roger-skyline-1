@@ -335,8 +335,8 @@ mv update_packages /etc/cron.weekly
 #write out current crontab
 #echo new cron into cron file
 echo "# Update source to packages
-@reboot		/etc/cron.weekly/update_packages >/dev/null 2>&1
-* * * * *	~/scripts/monitor_cronfile.sh >/dev/null 2>&1" >> mycron
+@reboot		/etc/cron.weekly/update_packages	>/dev/null 2>&1
+@midnight	~/scripts/monitor_cronfile.sh		>/dev/null 2>&1" >> mycron
 #install new cron file
 crontab mycron
 rm mycron
