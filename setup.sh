@@ -108,21 +108,21 @@ sv restart sshd
 ##Protect against a DoS attack
 ###
 #pacman -S --noconfirm ipset
-installpkg(ipset)
+installpkg ipset
 
 #pacman -S --noconfirm iptables iptables-runit
-installpkg(iptables)
-installpkg(iptables-runit)
+installpkg iptables
+installpkg iptables-runit
 ln -s /etc/runit/sv/iptables/ /run/runit/service/
 
 #pacman -S --noconfirm apache apache-runit
-installpkg(apache)
-installpkg(apache-runit)
+installpkg apache
+installpkg apache-runit
 ln -s /etc/runit/sv/apache/ /run/runit/service/
 
 #pacman -S --noconfirm fail2ban fail2ban-runit
-installpkg(fail2ban)
-installpkg(fail2ban-runit)
+installpkg fail2ban
+installpkg fail2ban-runit
 ln -s /etc/runit/sv/fail2ban/ /run/runit/service/
 
 cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
@@ -300,13 +300,13 @@ echo -e "<html>
 ## Crontab, Cronie and Rsync 
 ###
 #pacman -S --noconfirm cronie cronie-runit
-installpkg(cronie)
-installpkg(cronie-runit)
+installpkg cronie
+installpkg cronie-runit
 ln -s /etc/runit/sv/cronie/ /run/runit/service/
 
 #pacman -S --noconfirm rsync rsync-runit
-installpkg(rsync)
-installpkg(rsync-runit)
+installpkg rsync
+installpkg rsync-runit
 ln -s /etc/runit/sv/rsyncd/ /run/runit/service/
 
 export VISUAL=vim
@@ -378,8 +378,8 @@ chmod 755 monitor_cronfile.sh
 mv monitor_cronfile.sh scrips
 
 #pacman -S --noconfirm postfix postfix-runit
-installpkg(postfix)
-installpkg(postfix-runit)
+installpkg postfix
+installpkg postfix-runit
 ln -s /etc/runit/sv/postfix/ /run/runit/service/
 
 echo -e "
@@ -397,7 +397,7 @@ sv restart postfix
 
 
 #pacman -S --noconfirm mutt
-installpkg(mutt)
+installpkg mutt
 
 echo -e "set mbox_type=Maildir
 set folder=\"/root/mail\"
