@@ -267,6 +267,16 @@ echo -e "<html>
 <title>Bitcoin</title>
 </head>
 <body>
+	<br>
+	<br>
+	<p>Create or login</p>
+	<br>
+	<form action="create.php" method="POST">
+		Username: <input type="text" name="login" value =""/>
+		<br/>
+		Password: <input type="password" name="passwd" value =""/>
+		<input type="submit" name="submit" value="OK"/>
+	</form>
 </body>
 </html>" > /srv/http/index.html
 
