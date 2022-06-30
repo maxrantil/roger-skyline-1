@@ -5,6 +5,7 @@
 
 ## Functions
 ###
+
 pacman_candy() { \
 		grep -q "ILoveCandy" /etc/pacman.conf || sed -i "/#VerbosePkgLists/a ILoveCandy" /etc/pacman.conf
 		sed -Ei "s/^#(ParallelDownloads).*/\1 = 5/;/^#Color$/s/#//" /etc/pacman.conf
@@ -13,6 +14,7 @@ pacman_candy() { \
 installpkg() {  \
 		pacman -S --noconfirm "$1" >/dev/null 2>&1
 		}
+
 ## Script Main starts here
 ###
 pacman-key --init
