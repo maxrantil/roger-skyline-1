@@ -3,7 +3,7 @@
 ## Script for auto-installing Artix linux from scratch
 ## 4 partitions with swap (1G boot)
 
-## Functions
+## FUNCTIONS
 ###
 
 pacman_candy() { \
