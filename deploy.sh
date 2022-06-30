@@ -3,17 +3,27 @@
 ## Script for auto-installing Artix linux from scratch
 ## 4 partitions with swap (1G boot)
 
+## Functions
+###
+pacman_candy() { \
+		grep -q "ILoveCandy" /etc/pacman.conf || sed -i "/#VerbosePkgLists/a ILoveCandy" /etc/pacman.conf
+		sed -Ei "s/^#(ParallelDownloads).*/\1 = 5/;/^#Color$/s/#//" /etc/pacman.conf
+		}
+
+installpkg() {  \
+		pacman -S --noconfirm "$1" >/dev/null 2>&1
+		}
 ## Script Main starts here
 ###
 pacman-key --init
 pacman-key --populate
 
 # Make pacman colorful, concurrent downloads and Pacman eye-candy.
-grep -q "ILoveCandy" /etc/pacman.conf || sed -i "/#VerbosePkgLists/a ILoveCandy" /etc/pacman.conf
-sed -Ei "s/^#(ParallelDownloads).*/\1 = 5/;/^#Color$/s/#//" /etc/pacman.conf
+pacman_candy
 
 pacman --noconfirm -Sy dialog || error "Are you sure you're running this as the root user, are on an Arch-based distribution and have an internet connection?"
-pacman -S --noconfirm glibc lib32-glibc
+installpkg glibc
+installpkg lib32-glibc
 dialog --no-cancel --inputbox "Enter a name for your computer(e.g. 'desktop')." 10 60 2> comp
 dialog --title "Time Zone select" --yesno "Do you want use zone(Europe/Helsinki)?.\n\nPress no for select your own time zone"  10 60 && echo "Europe/Helsinki" > tz.tmp || tzselect > tz.tmp
 dialog --no-cancel --inputbox "Enter partitionsize in gb, separated by space (swap & root)." 10 60 2>psize
@@ -83,6 +93,6 @@ curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/chroot.s
 
 umount -R /mnt
 
-dialog --title "Done" --msgbox "After this the computer will poweroff, unmount the .iso file, change the network configuration to Bridged Adapter before starting again"  10 60
+##dialog --title "Done" --msgbox "After this the computer will poweroff, unmount the .iso file, change the network configuration to Bridged Adapter before starting again"  10 60
 
-poweroff
+##poweroff
