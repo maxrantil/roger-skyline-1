@@ -37,10 +37,10 @@ if ! [ ${#SIZE[@]} -eq 2 ] || ! [[ ${SIZE[0]} =~ $re ]] || ! [[ ${SIZE[1]} =~ $r
     SIZE=(12 25);
 fi
 
-#for virtualBox /dev/sda
-#for virtual manager /dev/vda
-# you need to change in chroot.sh where grub is installed too
-#disk=$(lsblk | awk '/G/ {print $1}')
+## for virtualBox /dev/sda
+## for virtual manager /dev/vda
+## you need to change in chroot.sh where grub is installed too
+# disk=$(lsblk | awk '/G/ {print $1}')
 
 cat <<EOF | fdisk /dev/sda
 o
