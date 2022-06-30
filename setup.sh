@@ -318,6 +318,8 @@ echo "export EDITOR='/usr/bin/vim'" >> ~/.bashrc
 echo "export VISUAL='/usr/bin/vim'" >> ~/.bashrc
 source ~/.bashrc
 
+ln -s /bin/vim /usr/bin/vi
+
 ##change user to $name and try it out there if it works on reboot
 ## Create a script that updates all sources of packages once per week at 4AM and on reboot
 ###
@@ -353,8 +355,8 @@ cat /var/spool/cron/root > /etc/crontab
 
 #script for check if there is changes to cronfile
 mkdir -p scripts
-touch ~/scrips/cron_md5
-chmod 755 ~/scrips/cron_md5
+touch ~/scripts/cron_md5
+chmod 755 ~/scripts/cron_md5
 cat > monitor_cronfile.sh <<'EOF'
 #!/bin/sh
 
@@ -372,7 +374,7 @@ shasum < $file > $new_sum		# Compute new sum
 
 if [ "$(diff $old_sum $new_sum)" != "" ]
 then
-	mail -s "crontab has been modified!" root
+	echo "it wasn't me?" | mail -s "crontab has been modified!" root@localhost
 	shasum < $file > $old_sum
 fi
 EOF
@@ -401,6 +403,7 @@ sv restart postfix
 
 #pacman -S --noconfirm mutt
 installpkg mutt
+installpkg mailx
 
 echo -e "set mbox_type=Maildir
 set folder=\"/root/mail\"
