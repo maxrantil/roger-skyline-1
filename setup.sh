@@ -130,7 +130,7 @@ cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 echo -e "# Fail2Ban configuration file
 
 [Definition]
-failregex = failregex = ^<HOST> -.*\"GET.*
+failregex = ^<HOST> -.*\"GET.*
 
 # Notes.: regex to ignore. If this regex matches, the line is ignored.
 ignoreregex =" > /etc/fail2ban/filter.d/http-get-dos.conf
@@ -138,7 +138,7 @@ ignoreregex =" > /etc/fail2ban/filter.d/http-get-dos.conf
 echo -e "# Fail2Ban configuration file
 
 [Definition]
-failregex = failregex = ^<HOST> -.*\"POST.*
+failregex = ^<HOST> -.*\"POST.*
 
 # Notes.: regex to ignore. If this regex matches, the line is ignored.
 ignoreregex =" > /etc/fail2ban/filter.d/http-post-dos.conf
