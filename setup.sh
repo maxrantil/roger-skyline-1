@@ -187,22 +187,6 @@ sv restart fail2ban
 ## install nslookup and dig
 #pacman -S --noconfirm bind
 
-## First flush
-#iptables -F
-## List your settings
-# iptables -L
-## Block ip
-# iptables -I INPUT -s <ip> -j DROP
-## BLock ip with submask
-# iptables -I INPUT -s <ip/netmask> -j DROP
-## Unban ip (first list)
-# iptables -L --line-numbers
-## Then specify the ip in the list
-# iptables -D INPUT <list number>
-## Block all traffic to the web server
-# iptables -I INPUT -p tcp --dport 80 -j DROP
-## Accept only one ip
-# iptables -I INPUT -p tcp --dport 80 <ip> -j ACCEPT
 
 ipset create port_scanners hash:ip family inet hashsize 32768 maxelem 65536 timeout 600
 ipset create scanned_ports hash:ip,port family inet hashsize 32768 maxelem 65536 timeout 60
