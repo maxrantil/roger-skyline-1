@@ -7,7 +7,7 @@ Name: 'roger-skyline-1'
 Type: 'Linux'
 Version: 'Linux 2.6 / 3.x / 4.x (64-bit)'
 ```
-After you have created your VM you should do some settings in the Virtual Box UI for later being able to setting up a static ip. At the top left of the window there is a 'Tools' options, press that and then 'Network'. Next press 'Create', and change to 'Configure Adapter Manually'. The thing we want to change here is the 'IPv4 Network Mask' to '255.255.255.252'. Be sure to have the DHCP Server unchecked. You don't want it enabled.
+After you have created your VM you should do some settings in the Virtual Box UI for later being able to setting up a static ip. At the top left of the window there is a 'Tools' options or your find 'Global Tools' at the uper right corner in some versions, press that and then 'Network'. Next press 'Create', and change to 'Configure Adapter Manually'. The thing we want to change here is the 'IPv4 Network Mask' to '255.255.255.252'. Be sure to have the DHCP Server unchecked. You don't want it enabled.
 This will create a prerequsite for opening a "Host-only Network". Now be sure that your VM is turned off and select it and go into 'Settings'. Choose 'Network' and then enable 'Adapter 2'. Choose 'Attached to: Host-only Adapter' and be sure to have the 'Name' of the "Host-only Network" you opened before. For me it is 'vboxnet0'.
 
 Then start the VM and login as 'root' with passwork 'artix'
@@ -177,7 +177,7 @@ edit /etc/hosts:
 ```
 127.0.0.1   localhost
 ::1         localhost
-127.0.0..1  <hostname>.localdomain <hostname>
+127.0.0.1  <hostname>.localdomain <hostname>
 ```
 
 exit chroot environment:
