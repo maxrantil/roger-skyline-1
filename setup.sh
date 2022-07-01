@@ -197,7 +197,7 @@ iptables -A INPUT -m state --state NEW -j SET --add-set scanned_ports src,dst
 iptables -A INPUT -p tcp -m tcp -m multiport ! --dports 80,443,${port} -j DROP
 
 ## Save the rules
-/sbin/iptables-save
+/sbin/iptables-save > /etc/iptables/iptables.rules
 
 ## scan the ports
 ## Commands for scanning
