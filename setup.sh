@@ -268,29 +268,49 @@ echo -e "<VirtualHost *:80>
 
 ## Website
 
-echo -e "<html>
+echo -e "<!DOCTYPE html>
+<html>
 <head>
-<style type=\"text/css\">
- body {
-  background-image: url(https://c.ndtvimg.com/2021-05/umqnehr8_this-is-fine-meme-bitcoin-meme_625x300_19_May_21.jpg);
-  background-repeat: repeat;
- }
-</style>
-<title>Bitcoin</title>
+	<title>Bitcoin</title>
+	<link rel=\"stylesheet\" href=\"styles.css\">
 </head>
 <body>
-	<br>
-	<br>
-	<p>Create or login</p>
-	<br>
-	<form action="create.php" method="POST">
-		Username: <input type="text" name="login" value =""/>
-		<br/>
-		Password: <input type="password" name="passwd" value =""/>
-		<input type="submit" name="submit" value="OK"/>
-	</form>
+	<div id=\"form-wrappper\">
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<p>Login</p>
+		<form action=\"index.html\" method=\"POST\">
+			Username: <input type=\"text\" name=\"login\" value =\"\"/>
+			<br/>
+			Password: <input type=\"password\" name=\"passwd\" value =\"\"/>
+			<input type=\"submit\" name=\"submit\" value=\"OK\"/>
+		</form>
+	</div>
 </body>
 </html>" > /srv/http/index.html
+
+echo -e "body {
+	background-image: url(https://c.ndtvimg.com/2021-05/umqnehr8_this-is-fine-meme-bitcoin-meme_625x300_19_May_21.jpg);
+	background-repeat: repeat;
+	height: 100vh;
+}
+p {
+	color: #000000;
+}
+#form-wrapper {
+	width:	22.5vh;
+	height:	15vh;
+	position	abssolute;
+	top:	50%;
+	left:	50%;
+	margin-top:		-7.5vh;
+	margin-left:	-11.25vh;
+}
+" > /srv/http/index.html
+
 
 ## List all services
 ###
