@@ -7,8 +7,10 @@ Name: 'roger-skyline-1'
 Type: 'Linux'
 Version: 'Linux 2.6 / 3.x / 4.x (64-bit)'
 ```
+After you have created your VM you should do some settings in the Virtual Box UI for later being able to setting up a static ip. At the top left of the window there is a 'Tools' options, press that and then 'Network'. Next press 'Create', and change to 'Configure Adapter Manually'. The thing we want to change here is the 'IPv4 Network Mask' to '255.255.255.252'. Be sure to have the DHCP Server unchecked. You don't want it enabled.
+This will create a prerequsite for opening a "Host-only Network". Now be sure that your VM is turned off and select it and go into 'Settings'. Choose 'Network' and then enable 'Adapter 2'. Choose 'Attached to: Host-only Adapter' and be sure to have the 'Name' of the "Host-only Network" you opened before. For me it is 'vboxnet0'.
 
-Login as 'root' with passwork 'artix'
+Then start the VM and login as 'root' with passwork 'artix'
 ```
 root
 artix
@@ -202,15 +204,14 @@ log in with root and the new password you have chose
 
 enable NetworkManager for internet access:
 ```
-sudo ln -s  /etc/runit/sv/NetworkManager /run/runit/service/NetworkManager
+sudo ln -s  /etc/runit/sv/NetworkManager /run/runit/service/
 ```
 
 
 ## optin 1, run script
 
 ```
-curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/setup.sh > setup.sh && bash setup.sh
-
+curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/setup.sh > setup.sh && sh setup.sh
 ```
 
 ## option 2, manually
