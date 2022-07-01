@@ -309,7 +309,7 @@ p {
 	margin-top:		-7.5vh;
 	margin-left:	-11.25vh;
 }
-" > /srv/http/index.html
+" > /srv/http/styles.css
 
 
 ## List all services
