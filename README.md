@@ -204,15 +204,14 @@ log in with root and the new password you have chose
 
 enable NetworkManager for internet access:
 ```
-sudo ln -s  /etc/runit/sv/NetworkManager /run/runit/service/NetworkManager
+sudo ln -s  /etc/runit/sv/NetworkManager /run/runit/service/
 ```
 
 
 ## optin 1, run script
 
 ```
-curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/setup.sh > setup.sh && bash setup.sh
-
+curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/setup.sh > setup.sh && sh setup.sh
 ```
 
 ## option 2, manually
