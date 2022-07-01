@@ -197,7 +197,7 @@ iptables -A INPUT -m state --state NEW -j SET --add-set scanned_ports src,dst
 iptables -A INPUT -p tcp -m tcp -m multiport ! --dports 80,443,${port} -j DROP
 
 ## Save the rules
-/sbin/iptables-save > /etc/iptables/iptables.rules
+iptables-save -f /etc/iptables/iptables.rules
 
 ## scan the ports
 ## Commands for scanning
@@ -305,11 +305,11 @@ installpkg cronie
 installpkg cronie-runit
 
 #pacman -S --noconfirm rsync rsync-runit
-installpkg rsync
-installpkg rsync-runit
+#installpkg rsync
+#installpkg rsync-runit
 
 ln -s /etc/runit/sv/cronie/ /run/runit/service/
-ln -s /etc/runit/sv/rsyncd/ /run/runit/service/
+#ln -s /etc/runit/sv/rsyncd/ /run/runit/service/
 
 
 export VISUAL=vim
