@@ -148,9 +148,6 @@ iptables -A INPUT -m state --state NEW -m set --match-set port_scanners src -j D
 iptables -A INPUT -m state --state NEW -j SET --add-set scanned_ports src,dst
 ## firewall
 iptables -A INPUT -p tcp -m tcp -m multiport ! --dports 80,443,${SSH_PORT} -j DROP
-##outgoing traffic allowed
-iptables -I OUTPUT -o eth0 -j ACCEPT
-iptables -I INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 ## Save the rules
 iptables-save -f /etc/iptables/iptables.rules
@@ -309,22 +306,19 @@ EOF
 chmod 755 monitor_cronfile.sh
 mv monitor_cronfile.sh scripts
 
-#cat > reload_iptables.sh <<'EOF'
-##!/bin/sh
+cat > reload_iptables.sh <<'EOF'
+#!/bin/sh
 
-#ipset create port_scanners hash:ip family inet hashsize 32768 maxelem 65536 timeout 600
-#ipset create scanned_ports hash:ip,port family inet hashsize 32768 maxelem 65536 timeout 60
-#iptables -A INPUT -m state --state INVALID -j DROP
-#iptables -A INPUT -m state --state NEW -m set ! --match-set scanned_ports src,dst -m hashlimit --hashlimit-above 1/hour --hashlimit-burst 5 --hashlimit-mode srcip --hashlimit-name portscan --hashlimit-htable-expire 10000 -j SET --add-set port_scanners src --exist
-#iptables -A INPUT -m state --state NEW -m set --match-set port_scanners src -j DROP
-#iptables -A INPUT -m state --state NEW -j SET --add-set scanned_ports src,dst
-#iptables -A INPUT -p tcp -m tcp -m multiport ! --dports 80,443 -j DROP
-#iptables -I OUTPUT -o eth0 -j ACCEPT
-#iptables -I INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT
-#EOF
-#echo "iptables -A INPUT -p tcp -m tcp -m multiport ! --dports ${SSH_PORT} -j DROP" >> reload_iptables.sh
-#chmod 755 reload_iptables.sh
-#mv reload_iptables.sh scripts
+ipset create port_scanners hash:ip family inet hashsize 32768 maxelem 65536 timeout 600
+ipset create scanned_ports hash:ip,port family inet hashsize 32768 maxelem 65536 timeout 60
+iptables -A INPUT -m state --state INVALID -j DROP
+iptables -A INPUT -m state --state NEW -m set ! --match-set scanned_ports src,dst -m hashlimit --hashlimit-above 1/hour --hashlimit-burst 5 --hashlimit-mode srcip --hashlimit-name portscan --hashlimit-htable-expire 10000 -j SET --add-set port_scanners src --exist
+iptables -A INPUT -m state --state NEW -m set --match-set port_scanners src -j DROP
+iptables -A INPUT -m state --state NEW -j SET --add-set scanned_ports src,dst
+EOF
+echo "iptables -A INPUT -p tcp -m tcp -m multiport ! --dports 80,443,${SSH_PORT} -j DROP" >> reload_iptables.sh
+chmod 755 reload_iptables.sh
+mv reload_iptables.sh scripts
 
 installpkg postfix
 installpkg postfix-runit
@@ -361,5 +355,5 @@ sv start apache
 rm setup.sh
 rm gen_certificates.sh
 
-dialog --title "Done" --msgbox "Now "  10 60
+dialog --title "Done" --msgbox "Reboot"  10 60
 reboot
