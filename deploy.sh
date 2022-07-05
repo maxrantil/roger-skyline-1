@@ -34,7 +34,7 @@ IFS=' ' read -ra SIZE <<< $(cat psize)
 
 re='^[0-9]+(\.[0-9]+?)?$'
 if ! [ ${#SIZE[@]} -eq 2 ] || ! [[ ${SIZE[0]} =~ $re ]] || ! [[ ${SIZE[1]} =~ $re ]] ; then
-    SIZE=(12 25);
+    SIZE=(2 4.2);
 fi
 
 ## for virtualBox /dev/sda
@@ -95,6 +95,6 @@ curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/chroot.s
 
 umount -R /mnt
 
-##dialog --title "Done" --msgbox "After this the computer will poweroff, unmount the .iso file, change the network configuration to Bridged Adapter before starting again"  10 60
+dialog --title "Done" --msgbox "After this the computer will poweroff, unmount the .iso file, change the network configuration to Bridged Adapter before starting again"  10 60
 
-##poweroff
+poweroff
