@@ -17,10 +17,20 @@ getuserandpasswd() { \
         done ;}
 
 securessh() { \
-		port=$(dialog --no-cancel --inputbox "What ssh port do you want to change to?(recommented range: 49152-65535)" 10 60 3>&1 1>&2 2>&3 3>&1)
-		sed -i 's/#Port 22/Port '$port'/g' /etc/ssh/sshd_config
+		#port=$(dialog --no-cancel --inputbox "What ssh port do you want to change to?(recommented range: 49152-65535)" 10 60 3>&1 1>&2 2>&3 3>&1)
+		#sed -i 's/#Port 22/Port '$port'/g' /etc/ssh/sshd_config
+		dialog --no-cancel --inputbox "What ssh port do you want to change to?(recommented range: 49152-65535)" 10 60 2>pchoice
+
+		read SSH_PORT <<< $(cat pchoice)
+
+		re='^(0|[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$'
+		if ! [[ ${SSH_PORT} =~ $re ]] ; then
+			SSH_PORT=(61216);
+		fi
+		sed -i 's/#Port 22/Port '${SSH_PORT}'/g' /etc/ssh/sshd_config
+		rm pchoice
 		sv restart sshd
-		dialog --no-cancel --title "Secure ssh" --msgbox "Be sure you have copied the ssh pub keys from your host into the client before pressing OK\n\n'ssh-copy-id -i ~/.ssh/<pubkey> $name@$ethernet -p $port'" 10 70
+		dialog --no-cancel --title "Secure ssh" --msgbox "Be sure you have copied the ssh pub keys from your host into the client before pressing OK\n\n'ssh-copy-id -i ~/.ssh/<pubkey> $name@$ethernet -p ${SSH_PORT}'" 10 70
 		if	dialog --stdout --title "Secure ssh" --yesno "SSH public key authentication?" 10 60; then
 			sed -i '/#PubkeyAuthentication yes/s/^#//g' /etc/ssh/sshd_config
 		fi
@@ -141,7 +151,7 @@ iptables -A INPUT -m state --state NEW -m set ! --match-set scanned_ports src,ds
 iptables -A INPUT -m state --state NEW -m set --match-set port_scanners src -j DROP
 iptables -A INPUT -m state --state NEW -j SET --add-set scanned_ports src,dst
 # firewall
-iptables -A INPUT -p tcp -m tcp -m multiport ! --dports 80,443,${port} -j DROP
+iptables -A INPUT -p tcp -m tcp -m multiport ! --dports 80,443,${SSH_PORT} -j DROP
 #outgoing traffic allowed
 iptables -I OUTPUT -o eth0 -j ACCEPT
 iptables -I INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT
@@ -315,7 +325,7 @@ iptables -A INPUT -p tcp -m tcp -m multiport ! --dports 80,443 -j DROP
 iptables -I OUTPUT -o eth0 -j ACCEPT
 iptables -I INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT
 EOF
-echo "iptables -A INPUT -p tcp -m tcp -m multiport ! --dports ${port} -j DROP" >> reload_iptables.sh
+echo "iptables -A INPUT -p tcp -m tcp -m multiport ! --dports ${SSH_PORT} -j DROP" >> reload_iptables.sh
 chmod 755 reload_iptables.sh
 mv reload_iptables.sh scripts
 
