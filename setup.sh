@@ -78,9 +78,9 @@ sed -i '/# %wheel ALL=(ALL:ALL) ALL/s/^# //g' /etc/sudoers
 getip
 ## Dosnt work on wifi 
 ## Uncomment for ethernet static ip
-#nmcli con mod "$con_name" ipv4.addr "${ethernet}/30" ipv4.gateway $gateway ipv4.dns "8.8.8.8, 8.8.4.4" ipv4.method "manual"
-#nmcli con reload
-#sv restart NetworkManager
+nmcli con mod "$con_name" ipv4.addr "${ethernet}/30" ipv4.gateway $gateway ipv4.dns "8.8.8.8, 8.8.4.4" ipv4.method "manual"
+nmcli con reload
+sv restart NetworkManager
 
 ## Secure ssh
 ###
