@@ -131,6 +131,7 @@ maxretry = 60
 findtime = 30
 bantime = 6000" >> /etc/fail2ban/jail.local
 
+sv restart fail2ban
 
 # portscanning attack protection
 ipset create port_scanners hash:ip family inet hashsize 32768 maxelem 65536 timeout 600
@@ -163,7 +164,6 @@ localityName            = Helsinki
 organizationName        = ${name}" >> /etc/httpd/conf/cert_ext.cnf
 
 curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/gen_certificates.sh > gen_certificates.sh
-chmod 755 gen_certificates.sh
 bash gen_certificates.sh
 
 sed -i '/#LoadModule ssl_module modules\/mod_ssl.so/s/^#//g' /etc/httpd/conf/httpd.conf
@@ -348,10 +348,10 @@ set record=\"+.Sent\"
 set postponed=\"+.Drafts\"
 set spoolfile=\"/root/mail\"" > .muttrc
 
-sv restart fail2ban
 sv stop apache
 sv start apache
 
 rm setup.sh
 rm gen_certificates.sh
-echo "Done."
+dialog --title "Done" --msgbox "Server is up and running."  10 60
+
