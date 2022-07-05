@@ -131,12 +131,7 @@ maxretry = 60
 findtime = 30
 bantime = 6000" >> /etc/fail2ban/jail.local
 
-sv restart fail2ban
 
-
-#outgoing traffic allowed
-iptables -I OUTPUT -o eth0 -j ACCEPT
-iptables -I INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT
 # portscanning attack protection
 ipset create port_scanners hash:ip family inet hashsize 32768 maxelem 65536 timeout 600
 ipset create scanned_ports hash:ip,port family inet hashsize 32768 maxelem 65536 timeout 60
@@ -146,6 +141,9 @@ iptables -A INPUT -m state --state NEW -m set --match-set port_scanners src -j D
 iptables -A INPUT -m state --state NEW -j SET --add-set scanned_ports src,dst
 # firewall
 iptables -A INPUT -p tcp -m tcp -m multiport ! --dports 80,443,${port} -j DROP
+#outgoing traffic allowed
+iptables -I OUTPUT -o eth0 -j ACCEPT
+iptables -I INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 ## Save the rules
 iptables-save -f /etc/iptables/iptables.rules
@@ -314,6 +312,8 @@ iptables -A INPUT -m state --state NEW -m set ! --match-set scanned_ports src,ds
 iptables -A INPUT -m state --state NEW -m set --match-set port_scanners src -j DROP
 iptables -A INPUT -m state --state NEW -j SET --add-set scanned_ports src,dst
 iptables -A INPUT -p tcp -m tcp -m multiport ! --dports 80,443 -j DROP
+iptables -I OUTPUT -o eth0 -j ACCEPT
+iptables -I INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT
 EOF
 echo "iptables -A INPUT -p tcp -m tcp -m multiport ! --dports ${port} -j DROP" >> reload_iptables.sh
 chmod 755 reload_iptables.sh
@@ -348,6 +348,7 @@ set record=\"+.Sent\"
 set postponed=\"+.Drafts\"
 set spoolfile=\"/root/mail\"" > .muttrc
 
+sv restart fail2ban
 sv stop apache
 sv start apache
 
