@@ -140,6 +140,11 @@ iptables -A INPUT -m state --state NEW -m set ! --match-set scanned_ports src,ds
 iptables -A INPUT -m state --state NEW -m set --match-set port_scanners src -j DROP
 iptables -A INPUT -m state --state NEW -j SET --add-set scanned_ports src,dst
 iptables -A INPUT -p tcp -m tcp -m multiport ! --dports 80,443,${port} -j DROP
+iptables -A OUTPUT -j ACCEPT
+iptables -I OUTPUT -o eth1 -j ACCEPT
+iptables -I OUTPUT -o eth0 -j ACCEPT
+iptables -I INPUT -i eth1 -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -I INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 ## Save the rules
 iptables-save -f /etc/iptables/iptables.rules
