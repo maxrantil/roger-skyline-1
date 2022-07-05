@@ -17,7 +17,7 @@ getuserandpasswd() { \
         done ;}
 
 securessh() { \
-		port=$(dialog --no-cancel --inputbox "What ssh port do you want to change to?(recommented range: 49152–65535)" 10 60 3>&1 1>&2 2>&3 3>&1)
+		port=$(dialog --no-cancel --inputbox "What ssh port do you want to change to?(recommented range: 49152-65535)" 10 60 3>&1 1>&2 2>&3 3>&1)
 		sed -i 's/#Port 22/Port '$port'/g' /etc/ssh/sshd_config
 		sv restart sshd
 		dialog --no-cancel --title "Secure ssh" --msgbox "Be sure you have copied the ssh pub keys from your host into the client before pressing OK\n\n'ssh-copy-id -i ~/.ssh/<pubkey> $name@$ethernet -p $port'" 10 70
