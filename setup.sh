@@ -36,7 +36,7 @@ getip() { \
 		device=$(nmcli con show | awk '/DEVICE/ {getline ; getline ; print $NF}')
 		con_name=$(nmcli con show | awk '/DEVICE/ {getline ; getline ; print $1" "$2" "$3}')
 		gateway=$(ip r | awk '/default/ {getline ; print $3}')
-		ethernet=$(ip r | awk '/'$gateway'/ {getline ; print $9}')
+		ethernet=$(ip r | awk '/'$gateway'/ {print $9}')
 		broadcast=$(ip a | awk '/'$ethernet'/ {print $4}')
 		eth_mask=$(ip a | awk '/'$ethernet'/ {print $2}')
 		}
