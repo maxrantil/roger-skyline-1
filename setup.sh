@@ -36,7 +36,7 @@ getip() { \
 		device=$(nmcli con show | awk '/DEVICE/ {getline ; getline ; print $NF}')
 		con_name=$(nmcli con show | awk '/DEVICE/ {getline ; getline ; print $1" "$2" "$3}')
 		gateway=$(ip r | awk '/default/ {getline ; print $3}')
-		ethernet=$(ip r | awk '/'$gateway'/ {print $9}')
+		ethernet=$(ip r | awk '/default/ {getline ; print $3}')
 		broadcast=$(ip a | awk '/'$ethernet'/ {print $4}')
 		eth_mask=$(ip a | awk '/'$ethernet'/ {print $2}')
 		}
@@ -55,14 +55,9 @@ installpkg() {  \
 
 pacman_candy
 
-## Install packages and enable them
-###
-
 pacman -Sy --noconfirm openssh-runit >/dev/null 2>&1
-##pacman -Sy --noconfirm ufw ufw-runit
 
 ln -s /etc/runit/sv/sshd /run/runit/service/
-##ln -s /etc/runit/sv/ufw /run/runit/service/
 
 ## Create user with sudo rights
 ###
@@ -72,55 +67,25 @@ echo -e "$pass1\n$pass1" | passwd $name
 usermod -aG wheel $name
 sed -i '/# %wheel ALL=(ALL:ALL) ALL/s/^# //g' /etc/sudoers
 
-#echo "$pass1" | su $name
-## Static IP
-###
-getip
-## Dosnt work on wifi 
-## Uncomment for ethernet static ip
-#nmcli con mod "$con_name" ipv4.addr "${ethernet}/30" ipv4.gateway $gateway ipv4.dns "8.8.8.8, 8.8.4.4" ipv4.method "manual"
-#nmcli con reload
-#sv restart NetworkManager
-
 ## Secure ssh
 ###
+getip
 securessh
 sv restart sshd
 
-## Enable Firewall (ufw)
+
+## Enable Firewall & Protect against a DoS attack
 ###
-#open firewall for ssh port:
-##ufw allow ${port}/tcp
-
-#for our web server we also need to open for port 80(http) and port 442(TCP/IP):
-##ufw allow 80/tcp
-##ufw allow 443/tcp
-
-## Bonus, hide the server so noone cant ping it
-###
-##sed -i '/^# ok icmp codes for INPUT/a -A ufw-before-input -p icmp --icmp-type echo-request -j DROP' /etc/ufw/before.rules
-
-#enable the firewall
-##ufw --force enable
-
-
-
-##Protect against a DoS attack
-###
-#pacman -S --noconfirm ipset
 installpkg ipset
 
-#pacman -S --noconfirm iptables iptables-runit
 installpkg iptables
 installpkg iptables-runit
 ln -s /etc/runit/sv/iptables/ /run/runit/service/
 
-#pacman -S --noconfirm apache apache-runit
 installpkg apache
 installpkg apache-runit
 ln -s /etc/runit/sv/apache/ /run/runit/service/
 
-#pacman -S --noconfirm fail2ban fail2ban-runit
 installpkg fail2ban
 installpkg fail2ban-runit
 ln -s /etc/runit/sv/fail2ban/ /run/runit/service/
@@ -167,26 +132,6 @@ findtime = 30
 bantime = 6000" >> /etc/fail2ban/jail.local
 
 sv restart fail2ban
-##ufw reload
-
-# Command to check why if wont work
-# /usr/bin/fail2ban-client -vv start
-
-# Unban 
-# fail2ban-client set jail-name unbanip <ip>
-# fail2ban-client unban --all
-
-## To test if it works you can use Slowloris
-# pacman -S --noconfirm python-pip
-# pip3 install slowloris
-# slowloris example.com
-
-## Port scan
-###
-#pacman -S --noconfirm nmap
-## install nslookup and dig
-#pacman -S --noconfirm bind
-
 
 ipset create port_scanners hash:ip family inet hashsize 32768 maxelem 65536 timeout 600
 ipset create scanned_ports hash:ip,port family inet hashsize 32768 maxelem 65536 timeout 60
@@ -198,20 +143,6 @@ iptables -A INPUT -p tcp -m tcp -m multiport ! --dports 80,443,${port} -j DROP
 
 ## Save the rules
 iptables-save -f /etc/iptables/iptables.rules
-
-## scan the ports
-## Commands for scanning
-## tls Triple-handshake scan (full tcp connection)
-# nmap -sT -p 80,443 <ip/submask>
-## Stealthy Syn Scan (half-open)
-# nmap -sS -p 80,443 <ip/submask>
-## Aggressive mode
-# nmap -A <ip>
-## Stealthy Syn Scan with decoil (half-open)
-# nmap -sS -D <decoil ip> <ip>
-## Use scripts (https://nmap.org/nsedoc/categories/)
-# nmap --script vuln <ip>
-
 
 ## SSL Cert
 ###
@@ -226,10 +157,6 @@ countryName             = FI
 stateOrProvinceName     = Nyland
 localityName            = Helsinki
 organizationName        = ${name}" >> /etc/httpd/conf/cert_ext.cnf
-
-##openssl genrsa -out server.key 1024
-##openssl rsa -in server.key.org -out server.key
-##openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
 
 curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/gen_certificates.sh > gen_certificates.sh
 chmod 755 gen_certificates.sh
@@ -293,24 +220,12 @@ p {
 " > /srv/http/styles.css
 
 
-## List all services
+## Crontab, Anacron & Cronie
 ###
-# pstree
-
-
-## Crontab, Cronie and Rsync 
-###
-#pacman -S --noconfirm cronie cronie-runit
 installpkg cronie
 installpkg cronie-runit
 
-#pacman -S --noconfirm rsync rsync-runit
-#installpkg rsync
-#installpkg rsync-runit
-
 ln -s /etc/runit/sv/cronie/ /run/runit/service/
-#ln -s /etc/runit/sv/rsyncd/ /run/runit/service/
-
 
 export VISUAL=vim
 export EDITOR=vim
@@ -321,7 +236,7 @@ source ~/.bashrc
 
 ln -s /bin/vim /usr/bin/vi
 
-##change user to $name and try it out there if it works on reboot
+
 ## Create a script that updates all sources of packages once per week at 4AM and on reboot
 ###
 cat > update_packages <<'EOF'
@@ -352,10 +267,10 @@ rm mycron
 # run at 4 AM
 sed -i 's/START_HOURS_RANGE=3-22/START_HOURS_RANGE=4-23/g' /etc/anacrontab
 
-#create a /etc/crontab file for the evaluation
+# create a /etc/crontab file for the evaluation
 cat /var/spool/cron/root > /etc/crontab
 
-#script for check if there is changes to cronfile
+# script for check if there is changes to cronfile
 mkdir -p scripts
 touch ~/scripts/cron_md5
 chmod 755 ~/scripts/cron_md5
@@ -398,7 +313,6 @@ echo "iptables -A INPUT -p tcp -m tcp -m multiport ! --dports ${port} -j DROP" >
 chmod 755 reload_iptables.sh
 mv reload_iptables.sh scripts
 
-#pacman -S --noconfirm postfix postfix-runit
 installpkg postfix
 installpkg postfix-runit
 
@@ -417,8 +331,6 @@ newaliases
 postconf -e "home_mailbox = mail/"
 sv restart postfix
 
-
-#pacman -S --noconfirm mutt
 installpkg mutt
 installpkg mailx
 
@@ -430,13 +342,9 @@ set record=\"+.Sent\"
 set postponed=\"+.Drafts\"
 set spoolfile=\"/root/mail\"" > .muttrc
 
-
-#enable the firewall :
-##ufw reload
 sv stop apache
 sv start apache
 
 rm setup.sh
 rm gen_certificates.sh
 echo "Done."
-#dialog --title "Done" --msgbox "After this the VM will poweroff."  10 60
