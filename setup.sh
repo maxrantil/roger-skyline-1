@@ -135,16 +135,13 @@ sv restart fail2ban
 
 ipset create port_scanners hash:ip family inet hashsize 32768 maxelem 65536 timeout 600
 ipset create scanned_ports hash:ip,port family inet hashsize 32768 maxelem 65536 timeout 60
+iptables -I OUTPUT -o eth1 -j ACCEPT
+iptables -I INPUT -i eth1 -m state --state ESTABLISHED,RELATED -j ACCEPT
 iptables -A INPUT -m state --state INVALID -j DROP
 iptables -A INPUT -m state --state NEW -m set ! --match-set scanned_ports src,dst -m hashlimit --hashlimit-above 1/hour --hashlimit-burst 5 --hashlimit-mode srcip --hashlimit-name portscan --hashlimit-htable-expire 10000 -j SET --add-set port_scanners src --exist
 iptables -A INPUT -m state --state NEW -m set --match-set port_scanners src -j DROP
 iptables -A INPUT -m state --state NEW -j SET --add-set scanned_ports src,dst
 iptables -A INPUT -p tcp -m tcp -m multiport ! --dports 80,443,${port} -j DROP
-iptables -A OUTPUT -j ACCEPT
-iptables -I OUTPUT -o eth1 -j ACCEPT
-iptables -I OUTPUT -o eth0 -j ACCEPT
-iptables -I INPUT -i eth1 -m state --state ESTABLISHED,RELATED -j ACCEPT
-iptables -I INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 ## Save the rules
 iptables-save -f /etc/iptables/iptables.rules
@@ -188,7 +185,7 @@ echo -e "<!DOCTYPE html>
 	<link rel=\"stylesheet\" href=\"styles.css\">
 </head>
 <body>
-	<div id=\"form-wrappper\">
+	<div id=\"form-wrapper\">
 		<br>
 		<br>
 		<br>
@@ -214,11 +211,11 @@ p {
 	color: #000000;
 }
 #form-wrapper {
-	width:	22.5vh;
-	height:	15vh;
-	position	abssolute;
-	top:	50%;
-	left:	50%;
+	width:			22.5vh;
+	height:			15vh;
+	position:		absolute;
+	top:			50%;
+	left:			50%;
 	margin-top:		-7.5vh;
 	margin-left:	-11.25vh;
 }
