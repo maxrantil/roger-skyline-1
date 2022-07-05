@@ -148,6 +148,9 @@ iptables -A INPUT -m state --state NEW -m set --match-set port_scanners src -j D
 iptables -A INPUT -m state --state NEW -j SET --add-set scanned_ports src,dst
 ## firewall
 iptables -A INPUT -p tcp -m tcp -m multiport ! --dports 80,443,${SSH_PORT} -j DROP
+##outgoing traffic allowed
+#iptables -I OUTPUT -o eth0 -j ACCEPT
+#iptables -I INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 ## Save the rules
 iptables-save -f /etc/iptables/iptables.rules
