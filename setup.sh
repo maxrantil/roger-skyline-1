@@ -357,6 +357,11 @@ set record=\"+.Sent\"
 set postponed=\"+.Drafts\"
 set spoolfile=\"/root/mail\"" > .muttrc
 
+cat<<EOF | mutt
+yes
+q
+EOF
+
 sv stop apache
 sv start apache
 
