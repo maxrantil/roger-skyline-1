@@ -89,6 +89,7 @@ installpkg ipset
 installpkg iptables
 installpkg iptables-runit
 ln -s /etc/runit/sv/iptables/ /run/runit/service/
+ln -s /etc/runit/sv/ip6tables/ /run/runit/service/
 
 installpkg apache
 installpkg apache-runit
@@ -219,12 +220,12 @@ p {
 	color: #000000;
 }
 #form-wrapper {
-	width:			22.5vh;
-	height:			15vh;
-	position:		absolute;
-	top:			50%;
-	left:			50%;
-	margin-top:		-7.5vh;
+	width:		22.5vh;
+	height:		15vh;
+	position:	absolute;
+	top:		50%;
+	left:		50%;
+	margin-top:	-7.5vh;
 	margin-left:	-11.25vh;
 }
 " > /srv/http/styles.css
