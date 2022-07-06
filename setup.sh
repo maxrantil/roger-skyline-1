@@ -285,27 +285,23 @@ cat /var/spool/cron/root > /etc/crontab
 
 # script for check if there is changes to cronfile
 mkdir -p scripts
-touch ~/scripts/cron_md5
-chmod 755 ~/scripts/cron_md5
 cat > monitor_cronfile.sh <<'EOF'
-#!/bin/sh
+#!/bin/bash
 
 file=/etc/crontab
-old_sum=/var/log/crontab_sum.old
-new_sum=/var/log/crontab_sum.new
+old=/var/log/crontab_old
+new=/var/log/crontab_new
 
-if [ ! -f $old_sum ]
-then
-	shasum < $file > $old_sum	# Compute old sum (if it doesn't exist)
+if [ ! -f $old ] ; then
+	cat $file | tee $old
 	exit
 fi
 
-shasum < $file > $new_sum		# Compute new sum
+cat $file | tee $new
 
-if [ "$(diff $old_sum $new_sum)" != "" ]
-then
+if [ "$(diff $old $new)" != "" ] ; then
 	echo "it wasn't me?" | mail -s "crontab has been modified!" root@localhost
-	shasum < $file > $old_sum
+	cat $file | tee $old
 fi
 EOF
 chmod 755 monitor_cronfile.sh
