@@ -357,16 +357,10 @@ set record=\"+.Sent\"
 set postponed=\"+.Drafts\"
 set spoolfile=\"/root/mail\"" > .muttrc
 
-cat<<EOF | mutt
-yes
-q
-EOF
-
 sv stop apache
 sv start apache
 
 rm setup.sh
 rm gen_certificates.sh
 
-#dialog --title "Done" --msgbox "The Vm will poweroff now, before starting it go into 'Settings/Network' and add an 'Adapter 2' with 'Host-only' before starting again to set a static ip for the server."  10 60
-#poweroff
+dialog --title "Done" --msgbox "Before you poweroff write '# mutt' answer 'Y' 'q' then poweroff, before starting it go into 'Settings/Network' and add an 'Adapter 2' with 'Host-only' before starting again to set a static ip for the server."  10 60
