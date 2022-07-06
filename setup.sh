@@ -155,7 +155,7 @@ iptables -I OUTPUT -o eth0 -j ACCEPT
 iptables -I INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT
 
 ## Save the rules
-iptables-save -f /etc/iptables/iptables.rules
+#iptables-save -f /etc/iptables/iptables.rules
 
 ## SSL Cert
 ###
