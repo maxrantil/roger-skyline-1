@@ -270,8 +270,8 @@ mv update_packages /etc/cron.weekly
 #echo new cron into cron file
 echo "# Update source to packages
 @reboot		/etc/cron.weekly/update_packages	>/dev/null 2>&1
-@midnight	~/scripts/monitor_cronfile.sh		>/dev/null 2>&1" >> mycron
-#@reboot		~/scripts/reload_iptables.sh		>/dev/null 2>&1
+@midnight	~/scripts/monitor_cronfile.sh		>/dev/null 2>&1
+@reboot		~/scripts/reload_iptables.sh		>/dev/null 2>&1" >> mycron
 
 #install new cron file
 crontab mycron
@@ -320,6 +320,9 @@ iptables -A INPUT -m state --state INVALID -j DROP
 iptables -A INPUT -m state --state NEW -m set ! --match-set scanned_ports src,dst -m hashlimit --hashlimit-above 1/hour --hashlimit-burst 5 --hashlimit-mode srcip --hashlimit-name portscan --hashlimit-htable-expire 10000 -j SET --add-set port_scanners src --exist
 iptables -A INPUT -m state --state NEW -m set --match-set port_scanners src -j DROP
 iptables -A INPUT -m state --state NEW -j SET --add-set scanned_ports src,dst
+##outgoing traffic allowed
+iptables -I OUTPUT -o eth0 -j ACCEPT
+iptables -I INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT
 EOF
 echo "iptables -A INPUT -p tcp -m tcp -m multiport ! --dports 80,443,${SSH_PORT} -j DROP" >> reload_iptables.sh
 chmod 755 reload_iptables.sh
@@ -343,8 +346,8 @@ newaliases
 postconf -e "home_mailbox = mail/"
 sv restart postfix
 
-installpkg mutt
-installpkg mailx
+pacman -S --noconfirm mutt
+pacman -S --noconfirm mailx
 
 echo -e "set mbox_type=Maildir
 set folder=\"/root/mail\"
@@ -360,5 +363,5 @@ sv start apache
 rm setup.sh
 rm gen_certificates.sh
 
-dialog --title "Done" --msgbox "Reboot"  10 60
-reboot
+#dialog --title "Done" --msgbox "The Vm will poweroff now, before starting it go into 'Settings/Network' and add an 'Adapter 2' with 'Host-only' before starting again to set a static ip for the server."  10 60
+#poweroff
