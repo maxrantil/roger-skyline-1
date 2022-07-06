@@ -89,7 +89,6 @@ installpkg ipset
 installpkg iptables
 installpkg iptables-runit
 ln -s /etc/runit/sv/iptables/ /run/runit/service/
-ln -s /etc/runit/sv/ip6tables/ /run/runit/service/
 
 installpkg apache
 installpkg apache-runit
@@ -268,7 +267,7 @@ mv update_packages /etc/cron.weekly
 
 #write out current crontab
 #echo new cron into cron file
-echo "# Update source to packages
+echo -e "# Update source to packages
 @reboot		/etc/cron.weekly/update_packages	>/dev/null 2>&1
 @midnight	~/scripts/monitor_cronfile.sh		>/dev/null 2>&1
 @reboot		~/scripts/reload_iptables.sh		>/dev/null 2>&1" >> mycron
