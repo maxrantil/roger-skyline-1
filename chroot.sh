@@ -23,8 +23,6 @@ installpkg() {  \
 
 ## continue from deploy.sh
 ###
-
-# Make pacman colorful, concurrent downloads and Pacman eye-candy.
 pacman_candy
 
 TZuser=$(<tzfinal.tmp)
