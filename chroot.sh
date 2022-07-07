@@ -27,7 +27,7 @@ installpkg() {  \
 # Make pacman colorful, concurrent downloads and Pacman eye-candy.
 pacman_candy
 
-TZuser=$(cat tzfinal.tmp)
+TZuser=$(<tzfinal.tmp)
 ln -sf /usr/share/zoneinfo/$TZuser /etc/localtime
 rm tzfinal.tmp
 
