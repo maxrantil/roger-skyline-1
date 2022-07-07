@@ -612,5 +612,7 @@ sv restart apache
 ```
 
 # Static ip
+https://www.calculator.net/ip-subnet-calculator.html
+
 In Virtual Box user interface you should do some configuration for a static IP. At the top corner there is a 'Tools' or  'Global Tools' options , press that and then 'Network'. Next press 'Create', and change to 'Configure Adapter Manually'. The thing we want to change here is the 'IPv4 Network Mask' to '255.255.255.252'. Be sure to have the DHCP Server unchecked. You don't want it enabled.
 This will create the prerequisite for opening a "Host-only Network". Now be sure that your VM is off and select 'Settings' > 'Network' and then enable 'Adapter 2'. Now choose  'Attached to: Host-only Adapter' then the 'Name' of the "Host-only Network" that you opened before. For me it is 'vboxnet0'.
