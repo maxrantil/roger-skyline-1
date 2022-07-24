@@ -39,7 +39,7 @@ locale-gen
 pacman -Sy --noconfirm networkmanager 
 installpkg networkmanager-runit
 installpkg network-manager-applet
-pacman -Sy --noconfirm grub && grub-install --target=i386-pc /dev/vda && grub-mkconfig -o /boot/grub/grub.cfg
+pacman -Sy --noconfirm grub && grub-install --target=i386-pc /dev/sda && grub-mkconfig -o /boot/grub/grub.cfg
 installpkg dialog
 
 changerootpasswd

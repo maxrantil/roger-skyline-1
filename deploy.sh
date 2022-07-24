@@ -42,7 +42,7 @@ fi
 ## you need to change in chroot.sh where grub is installed too
 # disk=$(lsblk | awk '/G/ {print $1}')
 
-cat <<EOF | fdisk /dev/vda
+cat <<EOF | fdisk /dev/sda
 o
 n
 p
@@ -67,16 +67,16 @@ p
 w
 EOF
 
-yes | mkfs.ext4 /dev/vda4
-yes | mkfs.ext4 /dev/vda3
-yes | mkfs.ext4 /dev/vda1
-mkswap /dev/vda2
-swapon /dev/vda2
-mount /dev/vda3 /mnt
+yes | mkfs.ext4 /dev/sda4
+yes | mkfs.ext4 /dev/sda3
+yes | mkfs.ext4 /dev/sda1
+mkswap /dev/sda2
+swapon /dev/sda2
+mount /dev/sda3 /mnt
 mkdir -p /mnt/boot
-mount /dev/vda1 /mnt/boot
+mount /dev/sda1 /mnt/boot
 mkdir -p /mnt/home
-mount /dev/vda4 /mnt/home
+mount /dev/sda4 /mnt/home
 
 rm psize
 
