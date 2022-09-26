@@ -10,11 +10,6 @@ $ artix
 
 $ curl https://raw.githubusercontent.com/maxrantil/roger-skyline-1/master/deploy.sh > deploy.sh && sh deploy.sh
 
-## on a fresh install activate internet with:
-###
-
-$ ln -s /etc/runit/sv/NetworkManager /run/runit/service/
-
 ## Then run the setup script
 ###
 

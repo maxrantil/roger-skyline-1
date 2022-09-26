@@ -23,11 +23,9 @@ installpkg() {  \
 
 ## continue from deploy.sh
 ###
-
-# Make pacman colorful, concurrent downloads and Pacman eye-candy.
 pacman_candy
 
-TZuser=$(cat tzfinal.tmp)
+TZuser=$(<tzfinal.tmp)
 ln -sf /usr/share/zoneinfo/$TZuser /etc/localtime
 rm tzfinal.tmp
 
@@ -41,6 +39,7 @@ locale-gen
 pacman -Sy --noconfirm networkmanager 
 installpkg networkmanager-runit
 installpkg network-manager-applet
+ln -s /etc/runit/sv/NetworkManager /etc/runit/runsvdir/default
 pacman -Sy --noconfirm grub && grub-install --target=i386-pc /dev/sda && grub-mkconfig -o /boot/grub/grub.cfg
 installpkg dialog
 
