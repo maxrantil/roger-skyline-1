@@ -1,7 +1,8 @@
 # roger-skyline-1 on Artix runit
-"This subject follows Init where you have learn some of basics commands and first
-reflexes in system and network administration. This one will be a concrete example of
-the use of those commands and will let you start your own first web server."
+
+The roger-skyline-1 project involves setting up and configuring a Linux-based server system using a provided virtual machine (VM) image file. This involves creating and configuring partitions on the VM's virtual hard drive, installing the Artix operating system, configuring the VM's locale, timezone, and hostname, and then booting the system from the hard drive. The end result is a fully-functional Linux server system that is ready for use.
+
+"This subject follows Init where you have learn some of basics commands and first reflexes in system and network administration. This one will be a concrete example of the use of those commands and will let you start your own first web server."
 
 download the (artix-base-runit-20220123-x86_64.iso) <a href=http://ftp.ludd.ltu.se/artix/iso/>file</a> and open it in a VM (I use VirtualBox): 
 ```
